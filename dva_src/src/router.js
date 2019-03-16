@@ -36,12 +36,22 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/IndexPage'),
     },
     {
-      path: '/products',
-      models: () => [import('./models/products')],
-      component: () => import('./routes/Products'),
+      path: '/statics',
+      models: () => [import('./models/template')],
+      component: () => import('./routes/statics'),
     },
     {
-      path: '/template',
+      path: '/statics/potentialClient',
+      models: () => [import('./models/template')],
+      component: () => import('./routes/statics/potentialClient'),
+    },
+    {
+      path: '/statics/vip',
+      models: () => [import('./models/template')],
+      component: () => import('./routes/statics/vip'),
+    },
+    {
+      path: '/manage',
       models: () => [import('./models/template')],
       component: () => import('./routes/activity/Template'),
     },

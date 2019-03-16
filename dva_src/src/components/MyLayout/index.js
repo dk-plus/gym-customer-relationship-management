@@ -26,16 +26,23 @@ const menu = [{
 //     icon: 'file',
 //   }],
 // }, {
-  key: 'template',
-  title: 'h5模板',
-  url: '/template',
-  icon: 'file',
+  key: 'statics',
+  title: '数据统计',
+  url: '/statics',
+  icon: 'bar-chart',
+}, {
+  key: 'manage',
+  title: '用户管理',
+  url: '/manage',
+  icon: 'user',
 }];
 
 const breadcrumbMap = {
   'home': '首页',
-  'template': 'h5模板',
-  'edit': '编辑',
+  'statics': '数据统计',
+  'manage': '用户管理',
+  'potentialClient': '潜在客户',
+  'vip': '会员',
 };
 
 class MyLayout extends React.Component {
@@ -58,9 +65,9 @@ class MyLayout extends React.Component {
 
     return (
       <Layout
-        style={{ height: '100%' }}>
+        style={{ minHeight: '100%' }}>
         <Header style={{display: 'flex', justifyContent: 'space-between'}}>
-          <div style={{ color: '#fff' }}>dva-demo</div>
+          <div style={{ color: '#fff' }}>健身房企业规范化化管理系统</div>
           <Menu
             mode="horizontal"
             theme="dark"
@@ -94,7 +101,7 @@ class MyLayout extends React.Component {
               {children}
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-              Dva-Demo ©2019 Created by dkplus
+              健身房企业规范化化管理系统 ©2019 Created by 蓝冰丽
             </Footer>
           </Layout>
         </Layout>

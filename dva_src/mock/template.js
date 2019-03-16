@@ -6,14 +6,18 @@ module.exports = {
 
     let num = Math.floor(Math.random()*100);
     let arr = [];
+    let names = ['小张', '小云', '小红', '小王', '小蓝', '小伟'];
     for (let i = 0; i < num; i++) {
       let obj = {
-        name: `圣诞活动${i+1}`,
+        name: names[i+1],
+        phone: Math.floor(Math.random()*10+1) * 13523451234,
+        sex: i%2 === 0 ? '男' : '女',
         id: i+1,
+        uid: Math.floor(Math.random() * 10 + 1),
         title: '迎春接福发发发嗷嗷的',
-        createTime: new Date().valueOf() - Math.floor(Math.random()*10*60*1000),
+        createdAt: new Date().valueOf() - Math.floor(Math.random()*10*60*1000),
         creator: i % 2 === 0 ? 'dkplus' : 'bingli',
-        updateTime: new Date().valueOf() + Math.floor(Math.random()*10*60*1000),
+        updatedAt: new Date().valueOf() + Math.floor(Math.random()*10*60*1000),
         updatePerson: i % 2 !== 0 ? 'dkplus' : 'bingli',
         status: i % 3 === 0 ? 0 : 1,
         beginTime: new Date().valueOf() - Math.floor(Math.random()*10*60*1000),

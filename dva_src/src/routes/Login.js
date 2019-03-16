@@ -41,7 +41,7 @@ class Login extends React.Component {
     return (
       <Layout style={{height: '100%'}}>
         <Content style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Card title="登录">
+          <Card title="健身房企业规范化化管理系统-登录">
             <Form onSubmit={this.handleSubmit}>
               <FormItem>
               {
@@ -51,7 +51,7 @@ class Login extends React.Component {
                     message: '请输入账号',
                   }]
                 })(
-                  <Input placeholder="请输入账号" addonBefore={<Icon type="user"/>}/>
+                  <Input placeholder="请输入账号" prefix={<Icon type="user"/>} />
                 )
               }
               </FormItem>
@@ -63,12 +63,13 @@ class Login extends React.Component {
                     message: '请输入密码',
                   }]
                 })(
-                  <Password placeholder="请输入密码" addonBefore={<Icon type="lock"/>}/>
+                  <Password placeholder="请输入密码" prefix={<Icon type="lock"/>}/>
                 )
               }
               </FormItem>
               <FormItem>
-                <Button type="primary" htmlType="submit" style={{width: '100%'}}>登录</Button>
+                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>登录</Button>
+                <Button htmlType="submit" style={{ width: '100%' }}>注册</Button>
               </FormItem>
             </Form>
           </Card>
