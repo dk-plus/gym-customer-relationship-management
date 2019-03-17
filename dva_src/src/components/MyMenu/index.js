@@ -48,7 +48,7 @@ class MyMenu extends React.Component {
         mode="inline"
         defaultSelectedKeys={[this.getSelectKey(location.pathname)]}
         style={{ height: '100%', borderRight: 0 }}
-        theme="dark"
+        // theme="dark"
       >
       {
         this.renderMenu(menu)

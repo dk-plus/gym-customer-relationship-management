@@ -35,6 +35,11 @@ const menu = [{
   title: '用户管理',
   url: '/manage',
   icon: 'user',
+}, {
+  key: 'courseManage',
+  title: '我的课程',
+  url: '/courseManage',
+  icon: 'calendar',
 }];
 
 const breadcrumbMap = {
@@ -43,6 +48,7 @@ const breadcrumbMap = {
   'manage': '用户管理',
   'potentialClient': '潜在客户',
   'vip': '会员',
+  'courseManage': '我的课程',
 };
 
 class MyLayout extends React.Component {
@@ -66,11 +72,11 @@ class MyLayout extends React.Component {
     return (
       <Layout
         style={{ minHeight: '100%' }}>
-        <Header style={{display: 'flex', justifyContent: 'space-between'}}>
-          <div style={{ color: '#fff' }}>健身房企业规范化化管理系统</div>
+        <Header style={{display: 'flex', justifyContent: 'space-between', background: '#fff'}}>
+          <div>健身房企业规范化化管理系统</div>
           <Menu
             mode="horizontal"
-            theme="dark"
+            // theme="dark"
             style={{ lineHeight: '64px' }}
           >
             <Menu.Item>
@@ -90,6 +96,7 @@ class MyLayout extends React.Component {
             collapsible
             collapsed={this.state.collapsed}
             onCollapse={this.onCollapse}
+            theme="light"
           >
             <MyMenu menu={menu} location={location}/>
           </Sider>

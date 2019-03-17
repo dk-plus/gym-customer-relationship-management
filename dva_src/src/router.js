@@ -51,6 +51,11 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/statics/vip'),
     },
     {
+      path: '/courseManage',
+      models: () => [import('./models/template')],
+      component: () => import('./routes/courseManage'),
+    },
+    {
       path: '/manage',
       models: () => [import('./models/template')],
       component: () => import('./routes/activity/Template'),

@@ -9,21 +9,20 @@ function toInt(str) {
 class UserController extends Controller {
   async index() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), offset: toInt(ctx.query.offset), where: { ...ctx.query } };
-    ctx.body = await ctx.model.User.findAll(query);
+    const { limit, offset, ...rest } = ctx.query;
+    const query = { limit: toInt(limit), offset: toInt(offset), where: { ...rest } };
+    ctx.body = await ctx.service.user.findAll(query);
   }
 
   async show() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.User.findById(toInt(ctx.params.id));
+    ctx.body = await ctx.service.user.findById(toInt(ctx.params.id));
   }
 
   async create() {
     const ctx = this.ctx;
     const { ...rest } = ctx.request.body;
-    const createAt = new Date().valueOf();
-    const updateAt = new Date().valueOf();
-    const user = await ctx.model.User.create({ createAt, updateAt, ...rest });
+    const user = await ctx.service.user.create({...rest});
     ctx.status = 201;
     ctx.body = user;
   }
@@ -31,22 +30,22 @@ class UserController extends Controller {
   async update() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.service.user.findById(id);
     if (!user) {
       ctx.status = 404;
       return;
     }
 
     const { ...rest } = ctx.request.body;
-    const updateAt = new Date().valueOf();
-    await user.update({ updateAt, ...rest });
+    const updatedAt = new Date().valueOf();
+    await user.update({ updatedAt, ...rest });
     ctx.body = user;
   }
 
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.service.user.findById(id);
     if (!user) {
       ctx.status = 404;
       return;

@@ -3,11 +3,12 @@
 module.exports = app => {
   const { STRING, INTEGER, BIGINT } = app.Sequelize;
 
-  const User = app.model.define('user', {
+  const Menu = app.model.define('menu', {
     id: { type: INTEGER, primaryKey: true, autoIncrement: true },
-    account: STRING(45),
-    password: STRING(45),
-    username: STRING(45),
+    menuName: {
+      type: STRING(45),
+      field: 'menu_name',
+    },
     createdAt: {
       type: BIGINT,
       field: 'created_at'
@@ -16,14 +17,12 @@ module.exports = app => {
       type: BIGINT,
       field: 'updated_at'
     },
-    phone: INTEGER,
-    email: STRING(45),
-    bornTime: {
-      type: BIGINT,
-      field: 'born_time',
+    parentId: {
+      type: INTEGER,
+      field: 'parent_id',
     },
     description: STRING(45),
   });
 
-  return User;
+  return Menu;
 };

@@ -10,13 +10,17 @@ module.exports = app => {
   router.get('/logout', controller.user.logout);
   router.resources('user', '/user', controller.user);
 
-  router.resources('activity', '/activity', controller.activity);
-  router.resources('dataDictionary', '/dictionary', controller.dataDictionary);
-  router.resources('activityModule', '/module', controller.activityModule);
+  router.resources('coach', '/coach', controller.coach);
+  router.resources('course', '/course', controller.course);
+  router.resources('courseHasStudent', '/courseHasStudent', controller.courseHasStudent);
+  router.resources('menu', '/menu', controller.menu);
+  router.resources('right', '/right', controller.right);
+  router.resources('role', '/role', controller.role);
+  router.resources('roleHasMenu', '/roleHasMenu', controller.roleHasMenu);
+  router.resources('roleHasRight', '/roleHasRight', controller.roleHasRight);
+  router.resources('student', '/student', controller.student);
+  router.resources('userHasRight', '/userHasRight', controller.userHasRight);
+  router.resources('userHasRole', '/userHasRole', controller.userHasRole);
   
   router.get('/*', controller.home.index);
-
-  // router.get('/api/:api', controller.api.index);
-  // router.post('/api/login', controller.api.login);
-  // router.get('/api/logout', controller.api.logout);
 };

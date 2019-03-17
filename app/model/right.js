@@ -3,11 +3,11 @@
 module.exports = app => {
   const { STRING, INTEGER, BIGINT } = app.Sequelize;
 
-  const DataDictionary = app.model.define('data_dictionary', {
+  const Right = app.model.define('right', {
     id: { type: INTEGER, primaryKey: true, autoIncrement: true },
-    data: {
-      type: STRING(100),
-      field: 'dictionary_data'
+    rightName: {
+      type: STRING(45),
+      field: 'right_name',
     },
     createdAt: {
       type: BIGINT,
@@ -17,7 +17,12 @@ module.exports = app => {
       type: BIGINT,
       field: 'updated_at'
     },
+    parentId: {
+      type: INTEGER,
+      field: 'parent_id',
+    },
+    description: STRING(45),
   });
 
-  return DataDictionary;
+  return Right;
 };
