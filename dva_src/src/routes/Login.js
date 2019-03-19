@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Input, Icon, Row, Col, Button, Form, Layout } from 'antd';
+import { Card, Input, Icon, Row, Col, Button, Form, Layout, message } from 'antd';
 
 const Password = Input.Password;
 const FormItem = Form.Item;
@@ -9,25 +9,52 @@ const { Content } = Layout;
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      registerMode: false, // 注册模式
+    };
   }
 
   handleSubmit = (e) => {
     e && e.preventDefault();
 
     const { form, dispatch } = this.props;
+    const { registerMode } = this.state;
 
     form.validateFields((err, fieldValue) => {
       if (err) return;
 
-      console.log(fieldValue);
+      // console.log(fieldValue);
+
+      if (registerMode) {
+        dispatch({
+          type: 'user/register',
+          payload: fieldValue,
+        }).then(res => {
+          if (res.returnCode === '0') {
+            message.warning(`注册成功！页面即将跳转……}`)
+            dispatch({
+              type: 'user/login',
+              payload: fieldValue,
+            }).then(res => {
+              if (res.returnCode === '0') {
+                window.location.href = '/home';
+              }
+            });
+          } else {
+            message.warning(`注册失败！${res.errorMessage || ''}`)
+          }
+        });
+        return;
+      }
 
       dispatch({
         type: 'user/login',
         payload: fieldValue,
       }).then(res => {
-        console.log('res', res);
-        if (res.code === 200) {
+        if (res.returnCode === '0') {
           window.location.href = '/home';
+        } else {
+          message.warning(`登录失败！${res.errorMessage || ''}`)
         }
       });
     });
@@ -36,16 +63,17 @@ class Login extends React.Component {
   render() {
     const rowGutter = { xs: 8, sm: 16, md: 24 };
     const colSpan = { xs: 24, sm: 12, md: 8 };
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { registerMode } = this.state;
 
     return (
       <Layout style={{height: '100%'}}>
         <Content style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Card title="健身房企业规范化化管理系统-登录">
+          <Card title="健身房企业规范化化管理系统">
             <Form onSubmit={this.handleSubmit}>
               <FormItem>
               {
-                getFieldDecorator('user', {
+                getFieldDecorator('account', {
                   rules: [{
                     required: true,
                     message: '请输入账号',
@@ -57,7 +85,7 @@ class Login extends React.Component {
               </FormItem>
               <FormItem>
               {
-                getFieldDecorator('pwd', {
+                getFieldDecorator('password', {
                   rules: [{
                     required: true,
                     message: '请输入密码',
@@ -67,9 +95,49 @@ class Login extends React.Component {
                 )
               }
               </FormItem>
+              {
+                registerMode &&
+                <FormItem>
+                  {
+                    getFieldDecorator('confirmPassword', {
+                      rules: [{
+                        required: true,
+                        message: '二次密码校验错误',
+                        validator: (rule, value, callback) => {
+                          const password = getFieldValue('password');
+                          if (password !== value) {
+                            callback('二次密码校验错误');
+                            return;
+                          }
+                          callback();
+                        }
+                      }]
+                    })(
+                      <Password placeholder="请再次输入密码" prefix={<Icon type="lock" />} />
+                    )
+                  }
+                </FormItem>
+              }
               <FormItem>
-                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>登录</Button>
-                <Button htmlType="submit" style={{ width: '100%' }}>注册</Button>
+                {
+                  registerMode &&
+                  <>
+                    <Button htmlType="submit" style={{ width: '100%' }}>注册</Button>
+                    <a style={{ width: '100%' }} onClick={() => {
+                      this.setState({
+                        registerMode: false,
+                      })
+                    }}><Icon type="info-circle" theme="twoTone" /> 已有账号？立即登录</a>
+                  </> ||
+                  <>
+                    <Button type="primary" htmlType="submit" style={{ width: '100%' }}>登录</Button>
+                    <a style={{ width: '100%' }} onClick={() => {
+                      this.setState({
+                        registerMode: true,
+                      })
+                    }}><Icon type="info-circle" theme="twoTone" /> 没有账号？立即注册</a>
+                  </>
+                }
               </FormItem>
             </Form>
           </Card>

@@ -24,5 +24,9 @@ module.exports = app => {
     description: STRING(45),
   });
 
+  Menu.associate = function() {
+    app.model.Menu.hasMany(app.model.RoleHasMenu, { foreignKey: 'menuId', targetKey: 'id', as: 'menuInfo' });
+  }
+
   return Menu;
 };

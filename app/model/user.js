@@ -4,7 +4,11 @@ module.exports = app => {
   const { STRING, INTEGER, BIGINT } = app.Sequelize;
 
   const User = app.model.define('user', {
-    id: { type: INTEGER, primaryKey: true, autoIncrement: true },
+    id: { 
+      type: INTEGER, 
+      primaryKey: true, 
+      autoIncrement: true,
+    },
     account: STRING(45),
     password: STRING(45),
     username: STRING(45),
@@ -24,6 +28,10 @@ module.exports = app => {
     },
     description: STRING(45),
   });
+
+  User.associate = function() {
+    app.model.User.hasMany(app.model.UserHasRole, { foreignKey: 'uid', targetKey: 'id', as: 'roles' });
+  }
 
   return User;
 };

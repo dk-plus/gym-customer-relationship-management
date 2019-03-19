@@ -19,5 +19,10 @@ module.exports = app => {
     },
   });
 
+  RoleHasMenu.associate = function() {
+    app.model.RoleHasMenu.belongsTo(app.model.Menu, { foreignKey: 'menuId', targetKey: 'id', as: 'menuInfo' });
+    app.model.RoleHasMenu.belongsTo(app.model.Role, { foreignKey: 'roleId', targetKey: 'id', as: 'menus' });
+  }
+
   return RoleHasMenu;
 };

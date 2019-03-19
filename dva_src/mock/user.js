@@ -33,6 +33,16 @@ module.exports = {
     });
   },
 
+  [`POST /register`](req, res) {
+
+    res.status(200).json({
+      errorMessage: '',
+      returnCode: '0',
+      returnMessage: 'success',
+      returnValue: {},
+    });
+  },
+
   [`GET /logout`](req, res) {
 
     res.status(200).json({

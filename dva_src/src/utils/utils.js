@@ -92,3 +92,9 @@ export function getSortName(sort, order) {
   order = order === 'ascend' ? 'ASC' : 'DESC'
   return `${sort}_${order}`;
 }
+
+// 获取用户信息
+export function getUser() {
+  const userInfo = document.getElementById('userInfo').value;
+  return JSON.parse(userInfo);
+}

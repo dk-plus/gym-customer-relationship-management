@@ -17,7 +17,7 @@ class MyBreadcrumb extends React.Component {
     let pathStack = [];
     return pathArr.map((path, index, arr) => {
       pathStack.push(path);
-      console.log(path, map, map[path])
+      // console.log(path, map, map[path])
       return <BreadcrumbItem key={path}>
         {
           index === arr.length - 1 &&

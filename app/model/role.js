@@ -24,5 +24,10 @@ module.exports = app => {
     description: STRING(45),
   });
 
+  Role.associate = function() {
+    app.model.Role.hasMany(app.model.UserHasRole, { foreignKey: 'roleId', targetKey: 'id', as: 'roleInfo' });
+    app.model.Role.hasMany(app.model.RoleHasMenu, { foreignKey: 'roleId', targetKey: 'id', as: 'menus' });
+  }
+
   return Role;
 };

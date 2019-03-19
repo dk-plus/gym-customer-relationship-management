@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Layout, Menu, Breadcrumb, Icon, Tooltip } from 'antd';
-import { arrayToKeyValue } from '../../utils/utils';
+import { arrayToKeyValue, getUser } from '../../utils/utils';
 import { Link, withRouter } from "dva/router";
 import MyBreadcrumb from "../MyBreadcrumb";
 import MyMenu from "../MyMenu";
@@ -9,7 +9,7 @@ import './index.css';
 
 const { Header, Content, Sider, Footer } = Layout;
 
-const menu = [{
+const totalMenu = [{
   key: 'home',
   title: '首页',
   url: '/home',
@@ -26,29 +26,63 @@ const menu = [{
 //     icon: 'file',
 //   }],
 // }, {
-  key: 'statics',
+  key: 'totalAchievement',
   title: '数据统计',
-  url: '/statics',
+  url: '/totalAchievement',
   icon: 'bar-chart',
 }, {
-  key: 'manage',
+  key: 'accountManagement',
   title: '用户管理',
-  url: '/manage',
+  url: '/accountManagement',
   icon: 'user',
 }, {
-  key: 'courseManage',
+  key: 'courseArrangement',
   title: '我的课程',
-  url: '/courseManage',
+  url: '/courseArrangement',
   icon: 'calendar',
+}, {
+  key: 'coachManagement',
+  title: '教练管理',
+  url: '/coachManagement',
+  icon: 'user',
+}, {
+  key: 'membershipManagement',
+  title: '会籍顾问管理',
+  url: '/membershipManagement',
+  icon: 'user',
+}, {
+  key: 'potentialClient',
+  title: '潜在客户管理',
+  url: '/potentialClient',
+  icon: 'user',
+}, {
+  key: 'personalAchievement',
+  title: '个人销售业绩',
+  url: '/personalAchievement',
+  icon: 'user',
 }];
+
+const menuName = getUser().menu.map(item => {
+  let name1 = item.split('_')[0];
+  let name2 = item.split('_')[1];
+  name2 = name2.substring(0,1).toUpperCase().concat(name2.substring(1));
+  return name1.concat(name2);
+})
+
+const menu = totalMenu.filter(menu => menuName.some(_ => _===menu.key));
+// console.log(menuName, menu)
 
 const breadcrumbMap = {
   'home': '首页',
-  'statics': '数据统计',
+  'totalAchievement': '数据统计',
   'manage': '用户管理',
+  'courseArrangement': '我的课程',
+  'coachManagement': '教练管理',
   'potentialClient': '潜在客户',
+  'membershipManagement': '会籍顾问管理',
+  'personalAchievement': '个人销售业绩',
   'vip': '会员',
-  'courseManage': '我的课程',
+  'my': '我的',
 };
 
 class MyLayout extends React.Component {
@@ -58,7 +92,7 @@ class MyLayout extends React.Component {
   };
 
   onCollapse = (collapsed) => {
-    console.log(collapsed);
+    // console.log(collapsed);
     this.setState({ collapsed });
   }
 

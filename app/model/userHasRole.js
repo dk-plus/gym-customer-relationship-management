@@ -15,5 +15,10 @@ module.exports = app => {
     },
   });
 
+  UserHasRole.associate = function() {
+    app.model.UserHasRole.belongsTo(app.model.User, { foreignKey: 'uid', targetKey: 'id', as: 'roles' });
+    app.model.UserHasRole.belongsTo(app.model.Role, { foreignKey: 'roleId', targetKey: 'id', as: 'roleInfo' });
+  }
+
   return UserHasRole;
 };

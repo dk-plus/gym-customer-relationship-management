@@ -27,16 +27,21 @@ function RouterConfig({ history, app }) {
 
   const Login = dynamic({
     app,
-    component: () => import('./routes/Login'),
+    component: () => import('./routes/login'),
   });
 
   const routes = [
     {
       path: '/home',
-      component: () => import('./routes/IndexPage'),
+      component: () => import('./routes/indexPage'),
     },
     {
-      path: '/statics',
+      path: '/my',
+      models: () => [import('./models/user')],
+      component: () => import('./routes/my'),
+    },
+    {
+      path: '/totalAchievement',
       models: () => [import('./models/template')],
       component: () => import('./routes/statics'),
     },
@@ -51,20 +56,10 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/statics/vip'),
     },
     {
-      path: '/courseManage',
+      path: '/courseArrangement',
       models: () => [import('./models/template')],
       component: () => import('./routes/courseManage'),
     },
-    {
-      path: '/manage',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/activity/Template'),
-    },
-    {
-      path: '/template/edit',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/activity/Edit'),
-    }
   ];
 
   history.listen((location) => {

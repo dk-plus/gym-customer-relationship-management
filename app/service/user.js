@@ -7,8 +7,11 @@ class User extends Service {
 
   async findAll(query) {
     const ctx = this.ctx;
-    const result = await ctx.model.User.findAll(query);
-    return result;
+    const result = await ctx.model.User.findAndCountAll(query);
+    return {
+      content: result.rows,
+      total: result.count,
+    };
   }
 
   async findById(id) {
@@ -25,32 +28,57 @@ class User extends Service {
     return result;
   }
 
-  async checkUser(user, pwd) {
+  async checkUser(account, password) {
     const ctx = this.ctx;
-    const query = { where:{ email: user } };
+    const query = { where:{ account } };
     const result = await ctx.model.User.findOne(query);
 
     if (!result) {
-      return {
-        code: 404,
-        message: '账号不存在',
-      };
+      return ctx.outputError('422', '账号不存在');
     }
 
-    if (result && result.password === pwd) {
-      return {
-        code: 200,
-        message: 'success',
-        data: {
-          content: 'ok',
-        },
-      };
+    if (result && result.password === password) {
+
+      // 查询用户的角色、菜单
+      const userInfo = await ctx.model.User.findOne({
+        include: [{
+          model: this.app.model.UserHasRole,
+          as: 'roles',
+          include: [{
+            model: this.app.model.Role,
+            as: 'roleInfo',
+            include: [{
+              model: this.app.model.RoleHasMenu,
+              as: 'menus',
+              include: [{
+                model: this.app.model.Menu,
+                as: 'menuInfo',
+              }]
+            }]
+          }]
+        }],
+        where: {
+          id: result.id,
+        }
+      });
+
+      const menuArr = userInfo.roles && userInfo.roles.map(role => {
+        return role.roleInfo && role.roleInfo.menus && role.roleInfo.menus.map(menu => menu.menuInfo.menuName)
+      });
+      const menu = [];
+      menuArr.forEach(item => {
+        item.forEach(child => menu.push(child))
+      });
+
+      return ctx.outputSuccess({
+        id: result.id,
+        username: result.username,
+        menu,
+        role: userInfo.roles && userInfo.roles.map(role => role.roleInfo && role.roleInfo.roleName),
+      });
     }
 
-    return {
-      code: 404,
-      message: '密码错误',
-    };
+    return ctx.outputError('422', '密码错误');
   }
 }
 
