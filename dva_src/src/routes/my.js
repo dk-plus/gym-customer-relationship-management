@@ -19,6 +19,9 @@ const { Option } = Select;
 class Edit extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      editMode: false,
+    }
   }
 
   componentDidMount() {
@@ -64,6 +67,7 @@ class Edit extends React.Component {
 
     const { dispatch, form, location: { query } } = this.props;
 
+    const userInfo = getUser();
     form.validateFieldsAndScroll((err, formValue) => {
       if (err) {
         message.warn('表单校验不通过');
@@ -72,27 +76,48 @@ class Edit extends React.Component {
 
       const params = {
         ...formValue,
-      }
+      };
+      params.bornTime = params.bornTime.startOf('day').valueOf();
 
       let url = 'user/create';
 
-      if (query.id) {
+      if (userInfo.id) {
         url = 'user/update';
       }
 
       dispatch({
         type: url,
         payload: {
-          id: query.id || '',
+          id: userInfo.id || '',
           params
         }
       }).then(res => {
         if (res.returnCode === '0') {
           message.success('保存成功');
-          this.backToUrl();
+          this.setState({
+            editMode: false,
+          })
         }
       });
     });
+  }
+
+  renderText() {
+    const { user: { detail }, location: { pathname }, form, editLoading } = this.props;
+    return <Card title="基本信息" extra={<Button type="dashed" size="small" onClick={() => {this.setState({editMode: true})}}>编辑</Button>}>
+      <Form.Item label="用户名">
+      {detail.username}
+      </Form.Item>
+      <Form.Item label="手机号">
+      {detail.phone}
+      </Form.Item>
+      <Form.Item label="出生日期">
+      {moment(detail.bornTime).format('YYYY-MM-DD')}
+      </Form.Item>
+      <Form.Item label="描述">
+      {detail.description}
+      </Form.Item>
+    </Card>
   }
 
   renderForm() {
@@ -115,7 +140,7 @@ class Edit extends React.Component {
             )}
           </Form.Item>
           <Form.Item label="手机号">
-            {getFieldDecorator('name', {
+            {getFieldDecorator('phone', {
               rules: [{
                 required: true,
                 message: '请输入手机号',
@@ -126,10 +151,10 @@ class Edit extends React.Component {
             )}
           </Form.Item>
           <Form.Item label="出生日期">
-            {getFieldDecorator('name', {
-              initialValue: detail.bornTime,
+            {getFieldDecorator('bornTime', {
+              initialValue: detail.bornTime && moment(detail.bornTime),
             })(
-              <Input placeholder="请输入出生日期" />
+              <DatePicker placeholder="请输入出生日期" />
             )}
           </Form.Item>
           <Form.Item label="描述">
@@ -144,7 +169,7 @@ class Edit extends React.Component {
           <Col>
             <Button type="primary" htmlType="submit" loading={editLoading}>提交</Button>
             <Divider type="vertical" />
-            <Button onClick={() => { this.backToUrl() }}>取消</Button>
+            <Button onClick={() => { this.setState({editMode: false}) }}>取消</Button>
           </Col>
         </Row>
       </Form>
@@ -153,9 +178,14 @@ class Edit extends React.Component {
 
   render() {
     const { user: { detail }, location: { pathname }, loading } = this.props;
+    const { editMode } = this.state;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
-        {this.renderForm()}
+        {
+          editMode &&
+          this.renderForm() ||
+          this.renderText()
+        }
       </Card>
     )
   }

@@ -6,6 +6,10 @@ function toInt(str) {
   return parseInt(str, 10) || 0;
 }
 
+/**
+ * UserController
+ * user
+ */
 class UserController extends Controller {
   // 查询全部 GET /user
   async index() {

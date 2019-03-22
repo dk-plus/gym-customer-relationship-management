@@ -27,6 +27,7 @@ function RouterConfig({ history, app }) {
 
   const Login = dynamic({
     app,
+    models: () => [import('./models/user')],
     component: () => import('./routes/login'),
   });
 
@@ -44,6 +45,11 @@ function RouterConfig({ history, app }) {
       path: '/totalAchievement',
       models: () => [import('./models/template')],
       component: () => import('./routes/statics'),
+    },
+    {
+      path: '/accountManagement',
+      models: () => [import('./models/accountManagement')],
+      component: () => import('./routes/accountManagement'),
     },
     {
       path: '/statics/potentialClient',

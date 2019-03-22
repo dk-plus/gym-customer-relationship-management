@@ -22,6 +22,9 @@ module.exports = app => {
   router.resources('student', '/student', controller.student);
   router.resources('userHasRight', '/userHasRight', controller.userHasRight);
   router.resources('userHasRole', '/userHasRole', controller.userHasRole);
+  router.resources('mark', '/mark', controller.mark);
+  router.resources('sales', '/sales', controller.sales);
+  router.resources('courseDate', '/courseDate', controller.courseDate);
   
   router.get('/*', controller.home.index);
 };

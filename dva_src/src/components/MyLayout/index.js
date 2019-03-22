@@ -15,17 +15,6 @@ const totalMenu = [{
   url: '/home',
   icon: 'home',
 }, {
-//   key: 'activity',
-//   title: '活动管理',
-//   url: '/activity',
-//   icon: 'file',
-//   children: [{
-//     key: 'template',
-//     title: 'h5模板',
-//     url: '/template',
-//     icon: 'file',
-//   }],
-// }, {
   key: 'totalAchievement',
   title: '数据统计',
   url: '/totalAchievement',
@@ -62,14 +51,19 @@ const totalMenu = [{
   icon: 'user',
 }];
 
-const menuName = getUser().menu.map(item => {
+const menuName = getUser().menu && getUser().menu.map(item => {
   let name1 = item.split('_')[0];
   let name2 = item.split('_')[1];
   name2 = name2.substring(0,1).toUpperCase().concat(name2.substring(1));
   return name1.concat(name2);
-})
+});
 
-const menu = totalMenu.filter(menu => menuName.some(_ => _===menu.key));
+const menu = menuName && totalMenu.filter(menu => menuName.some(_ => _===menu.key)) || [{
+  key: 'home',
+  title: '首页',
+  url: '/home',
+  icon: 'home',
+}];
 // console.log(menuName, menu)
 
 const breadcrumbMap = {
@@ -115,7 +109,7 @@ class MyLayout extends React.Component {
           >
             <Menu.Item>
               <Tooltip title="我的">
-                <Link to='/my'><Icon type="user" /></Link>
+                <Link to='/my'><Icon type="user" />{getUser().username}</Link>
               </Tooltip>
             </Menu.Item>
             <Menu.Item>

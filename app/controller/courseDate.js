@@ -7,41 +7,41 @@ function toInt(str) {
 }
 
 /**
- * UserHasRoleController
- * userHasRole
+ * CourseDateController
+ * courseDate
  */
-class UserHasRoleController extends Controller {
-  // 查询全部 GET /userHasRole
+class CourseDateController extends Controller {
+  // 查询全部 GET /courseDate
   async index() {
     const ctx = this.ctx;
     const { limit, offset, ...rest } = ctx.query;
     const query = { limit: toInt(limit), offset: toInt(offset), where: { ...rest } };
-    const result = await ctx.service.userHasRole.findAll(query);
+    const result = await ctx.service.courseDate.findAll(query);
     ctx.body = ctx.outputSuccess(result);
   }
 
-  // 查询id GET /userHasRole/:id
+  // 查询id GET /courseDate/:id
   async show() {
     const ctx = this.ctx;
-    const result = await ctx.service.userHasRole.findById(toInt(ctx.params.id));
+    const result = await ctx.service.courseDate.findById(toInt(ctx.params.id));
     ctx.body = ctx.outputSuccess(result);
   }
 
-  // 创建 POST /userHasRole
+  // 创建 POST /courseDate
   async create() {
     const ctx = this.ctx;
     const { ...rest } = ctx.request.body;
-    const userHasRole = await ctx.service.userHasRole.create({...rest});
+    const courseDate = await ctx.service.courseDate.create({...rest});
     ctx.status = 201;
-    ctx.body = ctx.outputSuccess(userHasRole);
+    ctx.body = ctx.outputSuccess(courseDate);
   }
 
-  // 更新 PUT /userHasRole/:id
+  // 更新 PUT /courseDate/:id
   async update() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const userHasRole = await ctx.service.userHasRole.findById(id);
-    if (!userHasRole) {
+    const courseDate = await ctx.service.courseDate.findById(id);
+    if (!courseDate) {
       ctx.status = 404;
       // ctx.outputError('404', '账号不存在');
       return;
@@ -49,24 +49,24 @@ class UserHasRoleController extends Controller {
 
     const { ...rest } = ctx.request.body;
     const updatedAt = new Date().valueOf();
-    await userHasRole.update({ updatedAt, ...rest });
-    ctx.body = ctx.outputSuccess(userHasRole);
+    await courseDate.update({ updatedAt, ...rest });
+    ctx.body = ctx.outputSuccess(courseDate);
   }
 
-  // 删除 DELETE /userHasRole/:id
+  // 删除 DELETE /courseDate/:id
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const userHasRole = await ctx.service.userHasRole.findById(id);
-    if (!userHasRole) {
+    const courseDate = await ctx.service.courseDate.findById(id);
+    if (!courseDate) {
       ctx.status = 404;
       return;
     }
 
-    await userHasRole.destroy();
+    await courseDate.destroy();
     ctx.status = 200;
     ctx.body = ctx.outputSuccess(true);
   }
 }
 
-module.exports = UserHasRoleController;
+module.exports = CourseDateController;

@@ -27,6 +27,10 @@ module.exports = app => {
       field: 'born_time',
     },
     description: STRING(45),
+    roleType: {
+      type: INTEGER,
+      field: 'has_role',
+    },
   });
 
   User.associate = function() {

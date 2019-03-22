@@ -12,28 +12,6 @@ class HomeController extends Controller {
       return;
     }
 
-    // let result = await this.app.model.User.findAll({
-    //   include: [{
-    //     model: this.app.model.UserHasRole,
-    //     as: 'roles',
-    //     include: [{
-    //       model: this.app.model.Role,
-    //       as: 'roleInfo',
-    //       include: [{
-    //         model: this.app.model.RoleHasMenu,
-    //         as: 'menus',
-    //         include: [{
-    //           model: this.app.model.Menu,
-    //           as: 'menuInfo',
-    //         }]
-    //       }]
-    //     }]
-    //   }],
-    // });
-
-    // ctx.body = JSON.stringify(result, {}, 2);
-    // return;
-
     // console.log(userInfo)
     await ctx.render('home.tpl', {
       title: '健身房企业规范化化管理系统',
@@ -45,6 +23,7 @@ class HomeController extends Controller {
     const { ctx } = this;
     await ctx.render('home.tpl', {
       title: '登录',
+      userInfo: '{}',
     });
   }
 }

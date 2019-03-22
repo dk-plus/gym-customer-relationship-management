@@ -7,41 +7,41 @@ function toInt(str) {
 }
 
 /**
- * UserHasRoleController
- * userHasRole
+ * SalesController
+ * sales
  */
-class UserHasRoleController extends Controller {
-  // 查询全部 GET /userHasRole
+class SalesController extends Controller {
+  // 查询全部 GET /sales
   async index() {
     const ctx = this.ctx;
     const { limit, offset, ...rest } = ctx.query;
     const query = { limit: toInt(limit), offset: toInt(offset), where: { ...rest } };
-    const result = await ctx.service.userHasRole.findAll(query);
+    const result = await ctx.service.sales.findAll(query);
     ctx.body = ctx.outputSuccess(result);
   }
 
-  // 查询id GET /userHasRole/:id
+  // 查询id GET /sales/:id
   async show() {
     const ctx = this.ctx;
-    const result = await ctx.service.userHasRole.findById(toInt(ctx.params.id));
+    const result = await ctx.service.sales.findById(toInt(ctx.params.id));
     ctx.body = ctx.outputSuccess(result);
   }
 
-  // 创建 POST /userHasRole
+  // 创建 POST /sales
   async create() {
     const ctx = this.ctx;
     const { ...rest } = ctx.request.body;
-    const userHasRole = await ctx.service.userHasRole.create({...rest});
+    const sales = await ctx.service.sales.create({...rest});
     ctx.status = 201;
-    ctx.body = ctx.outputSuccess(userHasRole);
+    ctx.body = ctx.outputSuccess(sales);
   }
 
-  // 更新 PUT /userHasRole/:id
+  // 更新 PUT /sales/:id
   async update() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const userHasRole = await ctx.service.userHasRole.findById(id);
-    if (!userHasRole) {
+    const sales = await ctx.service.sales.findById(id);
+    if (!sales) {
       ctx.status = 404;
       // ctx.outputError('404', '账号不存在');
       return;
@@ -49,24 +49,24 @@ class UserHasRoleController extends Controller {
 
     const { ...rest } = ctx.request.body;
     const updatedAt = new Date().valueOf();
-    await userHasRole.update({ updatedAt, ...rest });
-    ctx.body = ctx.outputSuccess(userHasRole);
+    await sales.update({ updatedAt, ...rest });
+    ctx.body = ctx.outputSuccess(sales);
   }
 
-  // 删除 DELETE /userHasRole/:id
+  // 删除 DELETE /sales/:id
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const userHasRole = await ctx.service.userHasRole.findById(id);
-    if (!userHasRole) {
+    const sales = await ctx.service.sales.findById(id);
+    if (!sales) {
       ctx.status = 404;
       return;
     }
 
-    await userHasRole.destroy();
+    await sales.destroy();
     ctx.status = 200;
     ctx.body = ctx.outputSuccess(true);
   }
 }
 
-module.exports = UserHasRoleController;
+module.exports = SalesController;
