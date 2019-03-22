@@ -1,8 +1,8 @@
-import * as userService from '../services/accountManagement';
+import * as userService from '../services/totalAchievement';
 import { queryToCommom } from '../utils/utils';
 
 /**
- * accountManagement
+ * totalAchievement
  */
 const stateData = {
   list: [],
@@ -11,7 +11,7 @@ const stateData = {
 
 export default {
 
-  namespace: 'accountManagement',
+  namespace: 'totalAchievement',
 
   state: {
     ...stateData,
@@ -67,24 +67,22 @@ export default {
     *create({ payload: { params } }, { call, put }) {  // eslint-disable-line
       params = params || {};
 
-      // const result = yield call(userService.create, params);
-      const result = yield call(userService.createUserHasRole, params);
+      const result = yield call(userService.create, params);
       return result;
     },
 
     // 更新
-    *update({ payload: { id, params } }, { call, all, put }) {  // eslint-disable-line
+    *update({ payload: { id, params } }, { call, put }) {  // eslint-disable-line
       params = params || {};
 
-      // const result = yield call(userService.update, id, params);
-      const result = yield call(userService.updateUserHasRole, id, params);
+      const result = yield call(userService.update, id, params);
       return result;
     },
 
     // 删除
     *delete({ payload }, { call, put }) {  // eslint-disable-line
 
-      const result = yield call(userService.deleteUser, payload);
+      const result = yield call(userService.deleteActivity, payload);
       return result;
     },
   },

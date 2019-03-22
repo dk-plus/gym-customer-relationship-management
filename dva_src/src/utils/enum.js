@@ -1,6 +1,8 @@
 
-// 上线状态
-export const ONLINE_STATUS = {
-  ONLINE: 1, // 上线
-  OFFLINE: 0, // 下线
+// 角色
+export const ROLE = {
+  MANAGER: 1, // 管理员
+  COACH: 2, // 教练
+  SALES: 3, // 会籍人员
+  MEMBER: 4, // 会员
 };

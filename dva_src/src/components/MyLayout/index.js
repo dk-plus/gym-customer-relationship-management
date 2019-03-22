@@ -25,6 +25,11 @@ const totalMenu = [{
   url: '/accountManagement',
   icon: 'user',
 }, {
+  key: 'courseManagement',
+  title: '课程管理',
+  url: '/courseManagement',
+  icon: 'calendar',
+}, {
   key: 'courseArrangement',
   title: '我的课程',
   url: '/courseArrangement',
@@ -48,7 +53,7 @@ const totalMenu = [{
   key: 'personalAchievement',
   title: '个人销售业绩',
   url: '/personalAchievement',
-  icon: 'user',
+  icon: 'bar-chart',
 }];
 
 const menuName = getUser().menu && getUser().menu.map(item => {
@@ -69,14 +74,16 @@ const menu = menuName && totalMenu.filter(menu => menuName.some(_ => _===menu.ke
 const breadcrumbMap = {
   'home': '首页',
   'totalAchievement': '数据统计',
-  'manage': '用户管理',
+  'accountManagement': '用户管理',
   'courseArrangement': '我的课程',
+  'courseManagement': '课程管理',
   'coachManagement': '教练管理',
   'potentialClient': '潜在客户',
   'membershipManagement': '会籍顾问管理',
   'personalAchievement': '个人销售业绩',
-  'vip': '会员',
+  'member': '会员',
   'my': '我的',
+  'edit': '编辑',
 };
 
 class MyLayout extends React.Component {

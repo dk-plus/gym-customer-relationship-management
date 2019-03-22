@@ -42,29 +42,64 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/my'),
     },
     {
-      path: '/totalAchievement',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/statics'),
-    },
-    {
       path: '/accountManagement',
       models: () => [import('./models/accountManagement')],
       component: () => import('./routes/accountManagement'),
     },
     {
-      path: '/statics/potentialClient',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/statics/potentialClient'),
+      path: '/accountManagement/edit',
+      models: () => [import('./models/accountManagement')],
+      component: () => import('./routes/accountManagement/edit'),
     },
     {
-      path: '/statics/vip',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/statics/vip'),
+      path: '/totalAchievement',
+      models: () => [import('./models/totalAchievement')],
+      component: () => import('./routes/totalAchievement'),
+    },
+    {
+      path: '/totalAchievement/potentialClient',
+      models: () => [import('./models/totalAchievement')],
+      component: () => import('./routes/totalAchievement/potentialClient'),
+    },
+    {
+      path: '/totalAchievement/member',
+      models: () => [import('./models/totalAchievement')],
+      component: () => import('./routes/totalAchievement/member'),
     },
     {
       path: '/courseArrangement',
-      models: () => [import('./models/template')],
-      component: () => import('./routes/courseManage'),
+      models: () => [import('./models/courseArrangement')],
+      component: () => import('./routes/courseArrangement'),
+    },
+    {
+      path: '/courseManagement',
+      models: () => [import('./models/courseManagement')],
+      component: () => import('./routes/courseManagement'),
+    },
+    {
+      path: '/coachManagement',
+      models: () => [import('./models/coachManagement')],
+      component: () => import('./routes/coachManagement'),
+    },
+    {
+      path: '/membershipManagement',
+      models: () => [import('./models/membershipManagement')],
+      component: () => import('./routes/membershipManagement'),
+    },
+    {
+      path: '/personalAchievement',
+      models: () => [import('./models/personalAchievement')],
+      component: () => import('./routes/personalAchievement'),
+    },
+    {
+      path: '/potentialClient',
+      models: () => [import('./models/potentialClient'), import('./models/accountManagement')],
+      component: () => import('./routes/potentialClient'),
+    },
+    {
+      path: '/totalAchievement',
+      models: () => [import('./models/totalAchievement')],
+      component: () => import('./routes/totalAchievement'),
     },
   ];
 

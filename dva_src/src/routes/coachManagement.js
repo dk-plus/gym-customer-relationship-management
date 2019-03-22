@@ -13,7 +13,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /**
- * modelname accountManagement
+ * modelname coachManagement
  */
 class List extends React.Component {
   constructor(props) {
@@ -22,7 +22,6 @@ class List extends React.Component {
 
   state = {
     queryForm: {},
-    passwordVisible: false,
   }
 
   componentDidMount() {
@@ -34,7 +33,7 @@ class List extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'accountManagement/initState',
+      type: 'coachManagement/initState',
     });
   }
 
@@ -51,7 +50,7 @@ class List extends React.Component {
     });
 
     dispatch({
-      type: 'accountManagement/fetch',
+      type: 'coachManagement/fetch',
       payload: { params },
     });
   }
@@ -105,7 +104,7 @@ class List extends React.Component {
   handleDelete(id) {
     const { dispatch, location: { query } } = this.props;
     dispatch({
-      type: 'accountManagement/delete',
+      type: 'coachManagement/delete',
       payload: id,
     }).then(res => {
       if (res && res.returnCode === '0') {
@@ -133,18 +132,6 @@ class List extends React.Component {
     this.loadData(params);
   }
 
-  // 状态
-  renderStatus(status) {
-    switch (status) {
-      case ONLINE_STATUS.ONLINE:
-        return <Tag color="green">已上线</Tag>
-      case ONLINE_STATUS.OFFLINE:
-        return <Tag color="red">已下线</Tag>
-      default:
-        break;
-    }
-  }
-
   // 时间、作者信息展示
   renderUpdateInfo(time, author) {
     const lastTime = moment(time);
@@ -152,47 +139,6 @@ class List extends React.Component {
       <div>{author}</div>
       <div>{lastTime.isValid() ? lastTime.format('YYYY-MM-DD HH:mm:ss') : ''}</div>
     </Fragment>    
-  }
-
-  // 时间轴
-  renderTime(timeArr) {
-    return <Fragment>
-      <Timeline>
-        {
-          timeArr.map(time => {
-            const lastTime = moment(time);
-            const timeStamp = lastTime.isValid() ? lastTime.valueOf() : ''
-            return <TimelineItem>{timeStamp}</TimelineItem>
-          })
-        }
-      </Timeline>
-    </Fragment>
-  }
-
-  // 渲染密码
-  renderPassword(pwd) {
-    const { passwordVisible } = this.state;
-    return <div style={{display: 'flex', justifyContent: 'space-between'}}>
-      {
-        passwordVisible &&
-        <>
-          <span>{pwd}</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: false,
-            });
-          }}>隐藏</a>
-        </> ||
-        <>
-          <span>******</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: true,
-            });
-          }}>查看</a>
-        </>
-      }
-    </div>
   }
 
   // 操作
@@ -210,7 +156,7 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { accountManagement: { list }, location: { pathname }, form } = this.props;
+    const { coachManagement: { list }, location: { pathname }, form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
@@ -219,7 +165,7 @@ class List extends React.Component {
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="用户ID" {...formItemLayout}>
+            <FormItem label="教练ID" {...formItemLayout}>
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
@@ -228,11 +174,11 @@ class List extends React.Component {
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="用户名" {...formItemLayout}>
+            <FormItem label="教练名" {...formItemLayout}>
               {getFieldDecorator('f_Username', {
                 initialValue: queryForm.f_Username,
               })(
-                <Input placeholder="请输入用户名"  />
+                <Input placeholder="请输入教练名"  />
               )}
               </FormItem>
             </Col>
@@ -243,7 +189,7 @@ class List extends React.Component {
   }
 
   render() {
-    const { accountManagement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { coachManagement: { list, total }, location: { pathname, query }, loading } = this.props;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -257,20 +203,9 @@ class List extends React.Component {
       dataIndex: 'id',
       sorter: true,
     }, {
-      title: '用户名',
+      title: '教练名',
       dataIndex: 'username',
       sorter: true,
-    }, {
-      title: '账号',
-      dataIndex: 'account',
-      sorter: true,
-      render: (val, record) => <Popover title="密码" content={this.renderPassword(record.password)}>{val}</Popover>
-    }, {
-      title: '角色',
-      dataIndex: 'role',
-      render: (val, record) => {
-        return record.roles && record.roles.map(role => role.roleInfo && role.roleInfo.description).join('，');
-      },
     }, {
       title: '操作',
       align: 'center',
@@ -303,10 +238,10 @@ class List extends React.Component {
   }
 }
 
-function mapStateToProps({ accountManagement, loading }) {
+function mapStateToProps({ coachManagement, loading }) {
   return {
-    accountManagement,
-    loading: loading.effects['accountManagement/fetch'],
+    coachManagement,
+    loading: loading.effects['coachManagement/fetch'],
   }
 }
 

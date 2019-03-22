@@ -19,5 +19,12 @@
   "theme": {
     "primary-color": "#ff3399"
   },
-  "es5ImcompatibleVersions": true
+  "es5ImcompatibleVersions": true,
+  "proxy": {
+    "/user": {
+      "target": "http://127.0.0.1:7991/",
+      "changeOrigin": true,
+      "pathRewrite": {"^/api": ""}
+    }
+  }
 }

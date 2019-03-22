@@ -53,24 +53,34 @@ module.exports = {
     });
   },
 
-  [`GET /user/:id`](req, res) {
+  [`PUT /user/:id`](req, res) {
 
     res.status(200).json({
       errorMessage: '',
       returnCode: '0',
       returnMessage: 'success',
-      returnValue: {
-        "id":1,
-        "account":"123456",
-        "password":"abc123",
-        "username":"bingli",
-        "createdAt":12731849324,
-        "updatedAt":235345645342,
-        "phone":123456,
-        "email":"12234@qq.com",
-        "bornTime":143235465645,
-        "description":"asfniqow"
-      },
+      returnValue: {},
     });
   },
+
+  // [`GET /user/:id`](req, res) {
+
+  //   res.status(200).json({
+  //     errorMessage: '',
+  //     returnCode: '0',
+  //     returnMessage: 'success',
+  //     returnValue: {
+  //       "id":1,
+  //       "account":"123456",
+  //       "password":"abc123",
+  //       "username":"bingli",
+  //       "createdAt":12731849324,
+  //       "updatedAt":235345645342,
+  //       "phone":123456,
+  //       "email":"12234@qq.com",
+  //       "bornTime":143235465645,
+  //       "description":"asfniqow"
+  //     },
+  //   });
+  // },
 }

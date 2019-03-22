@@ -13,7 +13,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /**
- * modelname accountManagement
+ * modelname courseManagement
  */
 class List extends React.Component {
   constructor(props) {
@@ -22,7 +22,6 @@ class List extends React.Component {
 
   state = {
     queryForm: {},
-    passwordVisible: false,
   }
 
   componentDidMount() {
@@ -34,7 +33,7 @@ class List extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'accountManagement/initState',
+      type: 'courseManagement/initState',
     });
   }
 
@@ -51,7 +50,7 @@ class List extends React.Component {
     });
 
     dispatch({
-      type: 'accountManagement/fetch',
+      type: 'courseManagement/fetch',
       payload: { params },
     });
   }
@@ -81,6 +80,18 @@ class List extends React.Component {
         ...formValue,
       }
 
+      // 处理时间
+      if (params.f_CreateTime && params.f_CreateTime.length > 0) {
+        params.f_CreateTimeBegin = params.f_CreateTime[0].startOf('day').valueOf();
+        params.f_CreateTimeEnd = params.f_CreateTime[1].endOf('day').valueOf();
+        delete params.f_CreateTime;
+      }
+      if (params.f_UpdateTime && params.f_UpdateTime.length > 0) {
+        params.f_UpdateTimeBegin = params.f_UpdateTime[0].startOf('day').valueOf();
+        params.f_UpdateTimeEnd = params.f_UpdateTime[1].endOf('day').valueOf();
+        delete params.f_UpdateTime;
+      }
+
       this.pushQueryToUrl(stringifyQuery(params));
 
       this.loadData(params);
@@ -105,7 +116,7 @@ class List extends React.Component {
   handleDelete(id) {
     const { dispatch, location: { query } } = this.props;
     dispatch({
-      type: 'accountManagement/delete',
+      type: 'courseManagement/delete',
       payload: id,
     }).then(res => {
       if (res && res.returnCode === '0') {
@@ -113,6 +124,22 @@ class List extends React.Component {
         this.loadData(query);
       } else {
         message.error(`删除失败${res.errorMessage}`);
+      }
+    });
+  }
+
+  // 上下线
+  handleUpdateStatus(id, status) {
+    const { dispatch, location: { query } } = this.props;
+    dispatch({
+      type: 'courseManagement/updateStatus',
+      payload: {id, status},
+    }).then(res => {
+      if (res && res.returnCode === '0') {
+        message.success('操作成功');
+        this.loadData(query);
+      } else {
+        message.error(`操作失败${res.errorMessage}`);
       }
     });
   }
@@ -169,37 +196,14 @@ class List extends React.Component {
     </Fragment>
   }
 
-  // 渲染密码
-  renderPassword(pwd) {
-    const { passwordVisible } = this.state;
-    return <div style={{display: 'flex', justifyContent: 'space-between'}}>
-      {
-        passwordVisible &&
-        <>
-          <span>{pwd}</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: false,
-            });
-          }}>隐藏</a>
-        </> ||
-        <>
-          <span>******</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: true,
-            });
-          }}>查看</a>
-        </>
-      }
-    </div>
-  }
-
   // 操作
   renderOperation() {
     const { location: { pathname } } = this.props;
     return <Fragment>
-      <Row type="flex" justify="end" style={{marginBottom: '20px'}}>
+      <Row type="flex" justify="space-between" style={{marginBottom: '20px'}}>
+        <Col>
+          <Button type="primary"><Link to={`${pathname}/edit`}>新建</Link></Button>
+        </Col>
         <Col>
           <Button type="primary" htmlType="submit">查询</Button>
           <Divider type="vertical" />
@@ -210,16 +214,16 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { accountManagement: { list }, location: { pathname }, form } = this.props;
+    const { courseManagement: { list }, location: { pathname }, form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 12, lg: 8 };
+    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="用户ID" {...formItemLayout}>
+            <FormItem label="活动ID" {...formItemLayout}>
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
@@ -228,14 +232,67 @@ class List extends React.Component {
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="用户名" {...formItemLayout}>
-              {getFieldDecorator('f_Username', {
-                initialValue: queryForm.f_Username,
+            <FormItem label="活动名称" {...formItemLayout}>
+              {getFieldDecorator('f_Name', {
+                initialValue: queryForm.f_Name,
               })(
-                <Input placeholder="请输入用户名"  />
+                <Input placeholder="请输入活动名称"  />
               )}
               </FormItem>
             </Col>
+            <Col {...colSpan}>
+              <FormItem label="标题" {...formItemLayout}>
+                {getFieldDecorator('f_Title', {
+                  initialValue: queryForm.f_Title,
+                })(
+                  <Input placeholder="请输入标题"  />
+                )}
+              </FormItem>
+          </Col>
+        </Row>
+        <Row gutter={rowGutter}>
+          <Col {...colSpan}>
+            <FormItem label="活动状态" {...formItemLayout}>
+              {getFieldDecorator('f_Status', {
+                initialValue: queryForm.f_Status,
+              })(
+                <Select placeholder="请选择状态" allowClear>
+                  <Option key={ONLINE_STATUS.ONLINE} value={ONLINE_STATUS.ONLINE}>上线</Option>
+                  <Option key={ONLINE_STATUS.OFFLINE} value={ONLINE_STATUS.OFFLINE}>下线</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col {...colSpan}>
+            <FormItem label="创建时间" {...formItemLayout}>
+              {getFieldDecorator('f_CreateTime', {
+                initialValue: queryForm.f_CreateTimeBegin && queryForm.f_CreateTimeEnd && [moment(parseInt(queryForm.f_CreateTimeBegin)), moment(parseInt(queryForm.f_CreateTimeEnd))],
+              })(
+                <RangePicker
+                  ranges={{ 
+                    '今天': [moment(), moment()], 
+                    '本周': [moment().startOf('week'), moment().endOf('week')],
+                    '本月': [moment().startOf('month'), moment().endOf('month')],
+                  }}
+                />
+              )}
+            </FormItem>
+          </Col>
+          <Col {...colSpan}>
+            <FormItem label="更新时间" {...formItemLayout}>
+              {getFieldDecorator('f_UpdateTime', {
+                initialValue: queryForm.f_UpdateTimeBegin && queryForm.f_UpdateTimeEnd && [moment(parseInt(queryForm.f_UpdateTimeBegin)), moment(parseInt(queryForm.f_UpdateTimeEnd))],
+              })(
+                <RangePicker
+                  ranges={{ 
+                    '今天': [moment(), moment()], 
+                    '本周': [moment().startOf('week'), moment().endOf('week')],
+                    '本月': [moment().startOf('month'), moment().endOf('month')],
+                  }}
+                />
+              )}
+            </FormItem>
+          </Col>
         </Row>
         {this.renderOperation()}
       </Form>
@@ -243,7 +300,7 @@ class List extends React.Component {
   }
 
   render() {
-    const { accountManagement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { courseManagement: { list, total }, location: { pathname, query }, loading } = this.props;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -257,29 +314,32 @@ class List extends React.Component {
       dataIndex: 'id',
       sorter: true,
     }, {
-      title: '用户名',
-      dataIndex: 'username',
+      title: '活动名称',
+      dataIndex: 'name',
       sorter: true,
     }, {
-      title: '账号',
-      dataIndex: 'account',
+      title: '更新信息',
+      dataIndex: 'updateAt',
+      align: 'center',
       sorter: true,
-      render: (val, record) => <Popover title="密码" content={this.renderPassword(record.password)}>{val}</Popover>
-    }, {
-      title: '角色',
-      dataIndex: 'role',
-      render: (val, record) => {
-        return record.roles && record.roles.map(role => role.roleInfo && role.roleInfo.description).join('，');
-      },
+      render: (val, record) => this.renderUpdateInfo(val, record.updatePerson)
     }, {
       title: '操作',
       align: 'center',
       width: '220',
       render: (val, record) => {
-        const id = record.roles && record.roles.map(hasRole => hasRole.id)[0];
-        const query = id && `&hasRoleId=${id}` || '';
         return <Fragment>
-          <Button size="small"><Link to={`${pathname}/edit?id=${record.id}${query}`}>编辑</Link></Button>
+          <Button size="small"><Link to={`${pathname}/edit?id=${record.id}`}>编辑</Link></Button>
+          <Divider type="vertical" />
+          {
+            record.status === ONLINE_STATUS.OFFLINE &&
+            <Popconfirm title="确认上线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.ONLINE)}}>
+              <Button size="small">上线</Button>
+            </Popconfirm> ||
+            <Popconfirm title="确认下线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.OFFLINE)}}>
+              <Button size="small">下线</Button>
+            </Popconfirm> 
+          }
           <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>
@@ -303,10 +363,10 @@ class List extends React.Component {
   }
 }
 
-function mapStateToProps({ accountManagement, loading }) {
+function mapStateToProps({ courseManagement, loading }) {
   return {
-    accountManagement,
-    loading: loading.effects['accountManagement/fetch'],
+    courseManagement,
+    loading: loading.effects['courseManagement/fetch'],
   }
 }
 

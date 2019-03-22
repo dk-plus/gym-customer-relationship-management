@@ -26,7 +26,7 @@ const scale = [{
   min: 0,
 }];
 
-class Template extends React.Component {
+class TotalAchievement extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -44,7 +44,7 @@ class Template extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'template/initState',
+      type: 'totalAchievement/initState',
     });
   }
 
@@ -61,7 +61,7 @@ class Template extends React.Component {
     });
 
     dispatch({
-      type: 'template/fetch',
+      type: 'totalAchievement/fetch',
       payload: { params },
     });
   }
@@ -84,7 +84,7 @@ class Template extends React.Component {
           </Link>
         </Col>
         <Col span={8}>
-          <Link to={`${pathname}/vip`}>
+          <Link to={`${pathname}/member`}>
             <Statistic title="正式会员" value={12} />
           </Link>
         </Col>
@@ -106,7 +106,7 @@ class Template extends React.Component {
   }
 
   render() {
-    const { template: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { totalAchievement: { list, total }, location: { pathname, query }, loading } = this.props;
     return <>
       {this.renderClient()}
       <Tabs defaultActiveKey="3">
@@ -120,11 +120,11 @@ class Template extends React.Component {
   }
 }
 
-function mapStateToProps({ template, loading }) {
+function mapStateToProps({ totalAchievement, loading }) {
   return {
-    template,
-    loading: loading.effects['template/fetch'],
+    totalAchievement,
+    loading: loading.effects['totalAchievement/fetch'],
   }
 }
 
-export default Form.create()(connect(mapStateToProps)(Template));
+export default Form.create()(connect(mapStateToProps)(TotalAchievement));

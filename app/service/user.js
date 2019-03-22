@@ -7,6 +7,68 @@ class User extends Service {
 
   async findAll(query) {
     const ctx = this.ctx;
+    let userType = query.userType && Number(query.userType);
+    if (userType === 1) {
+      query = {
+        include: [{
+          model: this.app.model.UserHasRole,
+          as: 'roles',
+          include: [{
+            model: this.app.model.Role,
+            as: 'roleInfo',
+            include: [{
+              model: this.app.model.RoleHasMenu,
+              as: 'menus',
+              include: [{
+                model: this.app.model.Menu,
+                as: 'menuInfo',
+              }]
+            }]
+          }]
+        }],
+        distinct: true,
+        ...query,
+      }
+    }
+    if (userType === 2) {
+      query = {
+        include: [{
+          model: this.app.model.UserHasRole,
+          as: 'roles',
+          where: {
+            roleId: 2, // 教练
+          }
+        }],
+        distinct: true,
+        ...query,
+      }
+    }
+    if (userType === 3) {
+      query = {
+        include: [{
+          model: this.app.model.UserHasRole,
+          as: 'roles',
+          where: {
+            roleId: 3, // 会籍人员
+          }
+        }],
+        distinct: true,
+        ...query,
+      }
+    }
+    if (userType === 4) {
+      query = {
+        include: [{
+          model: this.app.model.UserHasRole,
+          as: 'roles',
+          where: {
+            roleId: 4, // 会员
+          }
+        }],
+        distinct: true,
+        ...query,
+      }
+    }
     const result = await ctx.model.User.findAndCountAll(query);
     return {
       content: result.rows,
@@ -16,7 +78,28 @@ class User extends Service {
 
   async findById(id) {
     const ctx = this.ctx;
-    const result = ctx.model.User.findById(id);
+    // const result = ctx.model.User.findById(id);
+    const result = await ctx.model.User.findOne({
+      include: [{
+        model: this.app.model.UserHasRole,
+        as: 'roles',
+        include: [{
+          model: this.app.model.Role,
+          as: 'roleInfo',
+          include: [{
+            model: this.app.model.RoleHasMenu,
+            as: 'menus',
+            include: [{
+              model: this.app.model.Menu,
+              as: 'menuInfo',
+            }]
+          }]
+        }]
+      }],
+      where: {
+        id
+      },
+    });
     return result;
   }
 

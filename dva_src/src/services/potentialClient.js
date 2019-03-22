@@ -3,25 +3,14 @@ import { request, postData, putData, deleteData } from '../utils/request';
 
 /**
  * user
- * deleteUser
+ * deletePotentialClient
  */
-export function register(args) {
-  return postData('/register', args);
-}
-
-export function login(args) {
-  return postData('/login', args);
-}
-
-export function logout(args) {
-  return postData('/logout', args);
-}
 
 // 查询
 export function getList(args) {
   let query = queryString.stringify(args);
-  query = query ? `?${query}` : '';
-  return request(`/user/${query}`);
+  query = query ? `&${query}` : '';
+  return request(`/user/?roleType=0${query}`);
 }
 
 // 查询id
@@ -35,6 +24,6 @@ export function update(id, args) {
 }
 
 // 删除
-export function deleteUser(id) {
+export function deletePotentialClient(id) {
   return deleteData(`/user/${id}`);
 }

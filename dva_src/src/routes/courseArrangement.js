@@ -82,7 +82,7 @@ class Template extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'template/initState',
+      type: 'courseArrangement/initState',
     });
   }
 
@@ -99,7 +99,7 @@ class Template extends React.Component {
     });
 
     dispatch({
-      type: 'template/fetch',
+      type: 'courseArrangement/fetch',
       payload: { params },
     });
   }
@@ -113,17 +113,17 @@ class Template extends React.Component {
   }
 
   render() {
-    const { template: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { courseArrangement: { list, total }, location: { pathname, query }, loading } = this.props;
     return <>
       <Calendar dateCellRender={dateCellRender} monthCellRender={monthCellRender} />
     </>
   }
 }
 
-function mapStateToProps({ template, loading }) {
+function mapStateToProps({ courseArrangement, loading }) {
   return {
-    template,
-    loading: loading.effects['template/fetch'],
+    courseArrangement,
+    loading: loading.effects['courseArrangement/fetch'],
   }
 }
 

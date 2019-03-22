@@ -16,6 +16,9 @@ const { Option } = Select;
  * create
  * update
  */
+
+const userInfo = getUser();
+
 class Edit extends React.Component {
   constructor(props) {
     super(props);
@@ -26,8 +29,6 @@ class Edit extends React.Component {
 
   componentDidMount() {
     const { dispatch, location: { query } } = this.props;
-
-    const userInfo = getUser();
 
     this.loadData(userInfo);
   }
@@ -67,7 +68,7 @@ class Edit extends React.Component {
 
     const { dispatch, form, location: { query } } = this.props;
 
-    const userInfo = getUser();
+    // const userInfo = getUser();
     form.validateFieldsAndScroll((err, formValue) => {
       if (err) {
         message.warn('表单校验不通过');
@@ -94,6 +95,7 @@ class Edit extends React.Component {
       }).then(res => {
         if (res.returnCode === '0') {
           message.success('保存成功');
+          this.loadData(userInfo);
           this.setState({
             editMode: false,
           })
@@ -129,7 +131,7 @@ class Edit extends React.Component {
       <Form onSubmit={this.handleSubmit}>
         <Card title="基本信息">
           <Form.Item label="用户名">
-            {getFieldDecorator('name', {
+            {getFieldDecorator('username', {
               rules: [{
                 required: true,
                 message: '请输入用户名',
