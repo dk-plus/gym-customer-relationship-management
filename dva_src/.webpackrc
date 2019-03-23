@@ -25,6 +25,16 @@
       "target": "http://127.0.0.1:7991/",
       "changeOrigin": true,
       "pathRewrite": {"^/api": ""}
+    },
+    "/course": {
+      "target": "http://127.0.0.1:7991/",
+      "changeOrigin": true,
+      "pathRewrite": {"^/api": ""}
+    },
+    "/coach": {
+      "target": "http://127.0.0.1:7991/",
+      "changeOrigin": true,
+      "pathRewrite": {"^/api": ""}
     }
   }
 }

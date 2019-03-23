@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ONLINE_STATUS } from '../utils/enum';
+import {  } from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
@@ -160,18 +160,6 @@ class List extends React.Component {
     this.loadData(params);
   }
 
-  // 状态
-  renderStatus(status) {
-    switch (status) {
-      case ONLINE_STATUS.ONLINE:
-        return <Tag color="green">已上线</Tag>
-      case ONLINE_STATUS.OFFLINE:
-        return <Tag color="red">已下线</Tag>
-      default:
-        break;
-    }
-  }
-
   // 时间、作者信息展示
   renderUpdateInfo(time, author) {
     const lastTime = moment(time);
@@ -252,18 +240,6 @@ class List extends React.Component {
         </Row>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="活动状态" {...formItemLayout}>
-              {getFieldDecorator('f_Status', {
-                initialValue: queryForm.f_Status,
-              })(
-                <Select placeholder="请选择状态" allowClear>
-                  <Option key={ONLINE_STATUS.ONLINE} value={ONLINE_STATUS.ONLINE}>上线</Option>
-                  <Option key={ONLINE_STATUS.OFFLINE} value={ONLINE_STATUS.OFFLINE}>下线</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col {...colSpan}>
             <FormItem label="创建时间" {...formItemLayout}>
               {getFieldDecorator('f_CreateTime', {
                 initialValue: queryForm.f_CreateTimeBegin && queryForm.f_CreateTimeEnd && [moment(parseInt(queryForm.f_CreateTimeBegin)), moment(parseInt(queryForm.f_CreateTimeEnd))],
@@ -330,16 +306,6 @@ class List extends React.Component {
       render: (val, record) => {
         return <Fragment>
           <Button size="small"><Link to={`${pathname}/edit?id=${record.id}`}>编辑</Link></Button>
-          <Divider type="vertical" />
-          {
-            record.status === ONLINE_STATUS.OFFLINE &&
-            <Popconfirm title="确认上线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.ONLINE)}}>
-              <Button size="small">上线</Button>
-            </Popconfirm> ||
-            <Popconfirm title="确认下线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.OFFLINE)}}>
-              <Button size="small">下线</Button>
-            </Popconfirm> 
-          }
           <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>

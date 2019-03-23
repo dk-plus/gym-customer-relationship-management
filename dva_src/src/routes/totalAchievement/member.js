@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Popover, Form, Input, Row, Col, Select, DatePicker, message, Timeline } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../../components/BaseLayout';
-import { ONLINE_STATUS } from '../../utils/enum';
+import {  } from '../../utils/enum';
 import { stringifyQuery, getSortName } from '../../utils/utils';
 
 const TimelineItem = Timeline.Item;
@@ -157,18 +157,6 @@ class Template extends React.Component {
     this.loadData(params);
   }
 
-  // 状态
-  renderStatus(status) {
-    switch (status) {
-      case ONLINE_STATUS.ONLINE:
-        return <Tag color="green">已上线</Tag>
-      case ONLINE_STATUS.OFFLINE:
-        return <Tag color="red">已下线</Tag>
-      default:
-        break;
-    }
-  }
-
   // 时间、作者信息展示
   renderUpdateInfo(time, author) {
     const lastTime = moment(time);
@@ -248,18 +236,6 @@ class Template extends React.Component {
           </Col>
         </Row>
         <Row gutter={rowGutter}>
-          <Col {...colSpan}>
-            <FormItem label="性别" {...formItemLayout}>
-              {getFieldDecorator('f_Sex', {
-                initialValue: queryForm.f_Sex,
-              })(
-                <Select placeholder="请选择性别" allowClear>
-                  <Option key={ONLINE_STATUS.ONLINE} value={ONLINE_STATUS.ONLINE}>男</Option>
-                  <Option key={ONLINE_STATUS.OFFLINE} value={ONLINE_STATUS.OFFLINE}>女</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
           <Col {...colSpan}>
             <FormItem label="注册时间" {...formItemLayout}>
               {getFieldDecorator('f_CreateTime', {

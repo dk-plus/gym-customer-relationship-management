@@ -16,5 +16,9 @@ module.exports = app => {
     description: STRING(45),
   });
 
+  Course.associate = function() {
+    app.model.Course.belongsTo(app.model.Coach, { foreignKey: 'coachId', targetKey: 'id', as: 'courseInfo' });
+  }
+
   return Course;
 };

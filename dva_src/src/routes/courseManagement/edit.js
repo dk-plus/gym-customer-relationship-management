@@ -3,40 +3,34 @@ import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
-import {  } from '../utils/enum';
-import { getParentPath, getUser } from '../utils/utils';
+import {  } from '../../utils/enum';
+import { getParentPath } from '../../utils/utils';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Option } = Select;
 
 /**
- * model user
+ * model courseManagement
  * getDetail
  * create
  * update
  */
-
-const userInfo = getUser();
-
 class Edit extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      editMode: false,
-    }
   }
 
   componentDidMount() {
     const { dispatch, location: { query } } = this.props;
 
-    this.loadData(userInfo);
+    this.loadData(query);
   }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'user/initState',
+      type: 'courseManagement/initState',
     });
   }
 
@@ -44,12 +38,22 @@ class Edit extends React.Component {
   loadData(params) {
     const { dispatch } = this.props;
 
+    dispatch({
+      type: 'coachManagement/fetch',
+      payload: {
+        params: {
+          pageNo: 1,
+          pageSize: 999,
+        }
+      }
+    });
+    
     if (!params.id) {
       return;
     }
 
     dispatch({
-      type: 'user/getDetail',
+      type: 'courseManagement/getDetail',
       payload: params.id
     });
   }
@@ -68,7 +72,6 @@ class Edit extends React.Component {
 
     const { dispatch, form, location: { query } } = this.props;
 
-    // const userInfo = getUser();
     form.validateFieldsAndScroll((err, formValue) => {
       if (err) {
         message.warn('表单校验不通过');
@@ -77,93 +80,65 @@ class Edit extends React.Component {
 
       const params = {
         ...formValue,
-      };
-      params.bornTime = params.bornTime.startOf('day').valueOf();
+      }
 
-      let url = 'user/create';
+      let url = 'courseManagement/create';
 
-      if (userInfo.id) {
-        url = 'user/update';
+      if (query.id) {
+        url = 'courseManagement/update';
       }
 
       dispatch({
         type: url,
         payload: {
-          id: userInfo.id || '',
+          id: query.id || '',
           params
         }
       }).then(res => {
         if (res.returnCode === '0') {
           message.success('保存成功');
-          this.loadData(userInfo);
-          this.setState({
-            editMode: false,
-          })
+          this.backToUrl();
         }
       });
     });
   }
 
-  renderText() {
-    const { user: { detail }, location: { pathname }, form, editLoading } = this.props;
-    return <Card title="基本信息" extra={<Button type="dashed" size="small" onClick={() => {this.setState({editMode: true})}}>编辑</Button>}>
-      <Form.Item label="用户名">
-      {detail.username}
-      </Form.Item>
-      <Form.Item label="手机号">
-      {detail.phone}
-      </Form.Item>
-      <Form.Item label="出生日期">
-      {moment(detail.bornTime).format('YYYY-MM-DD')}
-      </Form.Item>
-      <Form.Item label="描述">
-      {detail.description}
-      </Form.Item>
-    </Card>
-  }
-
   renderForm() {
-    const { user: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { courseManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
     const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSubmit}>
         <Card title="基本信息">
-          <Form.Item label="用户名">
-            {getFieldDecorator('username', {
+          <Form.Item label="课程名称">
+            {getFieldDecorator('name', {
               rules: [{
                 required: true,
-                message: '请输入用户名',
+                message: '请输入课程名称',
               }],
-              initialValue: detail.username,
+              initialValue: detail.name,
             })(
-              <Input placeholder="请输入用户名" />
+              <Input placeholder="请输入课程名称" />
             )}
           </Form.Item>
-          <Form.Item label="手机号">
-            {getFieldDecorator('phone', {
+          <Form.Item label="教练">
+            {getFieldDecorator('coachId', {
               rules: [{
                 required: true,
-                message: '请输入手机号',
+                message: '请输入课程名称',
               }],
-              initialValue: detail.phone,
+              initialValue: detail.coachId,
             })(
-              <Input placeholder="请输入手机号" />
-            )}
-          </Form.Item>
-          <Form.Item label="出生日期">
-            {getFieldDecorator('bornTime', {
-              initialValue: detail.bornTime && moment(detail.bornTime),
-            })(
-              <DatePicker placeholder="请输入出生日期" />
+              <Select placeholder="请选择教练" allowClear>
+              </Select>
             )}
           </Form.Item>
           <Form.Item label="描述">
             {getFieldDecorator('description', {
               initialValue: detail.description,
             })(
-              <TextArea placeholder="请输入活动描述" rows={4} />
+              <TextArea placeholder="请输入课程描述" rows={4} />
             )}
           </Form.Item>
         </Card>
@@ -171,7 +146,7 @@ class Edit extends React.Component {
           <Col>
             <Button type="primary" htmlType="submit" loading={editLoading}>提交</Button>
             <Divider type="vertical" />
-            <Button onClick={() => { this.setState({editMode: false}) }}>取消</Button>
+            <Button onClick={() => { this.backToUrl() }}>取消</Button>
           </Col>
         </Row>
       </Form>
@@ -179,25 +154,20 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { user: { detail }, location: { pathname }, loading } = this.props;
-    const { editMode } = this.state;
+    const { courseManagement: { detail }, location: { pathname }, loading } = this.props;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
-        {
-          editMode &&
-          this.renderForm() ||
-          this.renderText()
-        }
+        {this.renderForm()}
       </Card>
     )
   }
 }
 
-function mapStateToProps({ user, loading }) {
+function mapStateToProps({ courseManagement, loading }) {
   return {
-    user,
-    loading: loading.effects['user/getDetail'],
-    editLoading: loading.effects['user/update'],
+    courseManagement,
+    loading: loading.effects['courseManagement/getDetail'],
+    editLoading: loading.effects['courseManagement/update'],
   }
 }
 

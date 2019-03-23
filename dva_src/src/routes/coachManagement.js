@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ONLINE_STATUS } from '../utils/enum';
+import {  } from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
@@ -203,9 +203,13 @@ class List extends React.Component {
       dataIndex: 'id',
       sorter: true,
     }, {
+      title: '用户ID',
+      dataIndex: 'uid',
+      sorter: true,
+    }, {
       title: '教练名',
       dataIndex: 'username',
-      sorter: true,
+      render: (val, record) => record.user && record.user.username || ''
     }, {
       title: '操作',
       align: 'center',

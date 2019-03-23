@@ -2,7 +2,7 @@ import queryString from 'query-string';
 import { request, postData, putData, deleteData } from '../utils/request';
 
 /**
- * courseManagement
+ * course
  * deleteCourseManagement
  */
 
@@ -10,20 +10,20 @@ import { request, postData, putData, deleteData } from '../utils/request';
 export function getList(args) {
   let query = queryString.stringify(args);
   query = query ? `?${query}` : '';
-  return request(`/courseManagement/${query}`);
+  return request(`/course/${query}`);
 }
 
 // 查询id
 export function getDetail(id) {
-  return request(`/courseManagement/${id}`);
+  return request(`/course/${id}`);
 }
 
 // 更新
 export function update(id, args) {
-  return putData(`/courseManagement/${id}`, args);
+  return putData(`/course/${id}`, args);
 }
 
 // 删除
 export function deleteCourseManagement(id) {
-  return deleteData(`/courseManagement/${id}`);
+  return deleteData(`/course/${id}`);
 }

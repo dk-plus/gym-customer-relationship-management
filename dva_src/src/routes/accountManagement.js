@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ONLINE_STATUS } from '../utils/enum';
+import {} from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
@@ -131,18 +131,6 @@ class List extends React.Component {
     this.pushQueryToUrl(stringifyQuery(params));
 
     this.loadData(params);
-  }
-
-  // 状态
-  renderStatus(status) {
-    switch (status) {
-      case ONLINE_STATUS.ONLINE:
-        return <Tag color="green">已上线</Tag>
-      case ONLINE_STATUS.OFFLINE:
-        return <Tag color="red">已下线</Tag>
-      default:
-        break;
-    }
   }
 
   // 时间、作者信息展示

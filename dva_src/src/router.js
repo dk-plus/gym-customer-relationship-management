@@ -48,7 +48,7 @@ function RouterConfig({ history, app }) {
     },
     {
       path: '/accountManagement/edit',
-      models: () => [import('./models/accountManagement')],
+      models: () => [import('./models/accountManagement'), import('./models/coachManagement')],
       component: () => import('./routes/accountManagement/edit'),
     },
     {
@@ -77,6 +77,11 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/courseManagement'),
     },
     {
+      path: '/courseManagement/edit',
+      models: () => [import('./models/courseManagement'), import('./models/coachManagement')],
+      component: () => import('./routes/courseManagement/edit'),
+    },
+    {
       path: '/coachManagement',
       models: () => [import('./models/coachManagement')],
       component: () => import('./routes/coachManagement'),
@@ -95,11 +100,6 @@ function RouterConfig({ history, app }) {
       path: '/potentialClient',
       models: () => [import('./models/potentialClient'), import('./models/accountManagement')],
       component: () => import('./routes/potentialClient'),
-    },
-    {
-      path: '/totalAchievement',
-      models: () => [import('./models/totalAchievement')],
-      component: () => import('./routes/totalAchievement'),
     },
   ];
 

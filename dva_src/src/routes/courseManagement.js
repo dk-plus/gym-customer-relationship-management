@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ONLINE_STATUS } from '../utils/enum';
+import {  } from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
@@ -128,22 +128,6 @@ class List extends React.Component {
     });
   }
 
-  // 上下线
-  handleUpdateStatus(id, status) {
-    const { dispatch, location: { query } } = this.props;
-    dispatch({
-      type: 'courseManagement/updateStatus',
-      payload: {id, status},
-    }).then(res => {
-      if (res && res.returnCode === '0') {
-        message.success('操作成功');
-        this.loadData(query);
-      } else {
-        message.error(`操作失败${res.errorMessage}`);
-      }
-    });
-  }
-
   // 表格改变
   handleTableChange = (pagination, filters, sorter) => {
     const { location: { query } } = this.props;
@@ -160,17 +144,6 @@ class List extends React.Component {
     this.loadData(params);
   }
 
-  // 状态
-  renderStatus(status) {
-    switch (status) {
-      case ONLINE_STATUS.ONLINE:
-        return <Tag color="green">已上线</Tag>
-      case ONLINE_STATUS.OFFLINE:
-        return <Tag color="red">已下线</Tag>
-      default:
-        break;
-    }
-  }
 
   // 时间、作者信息展示
   renderUpdateInfo(time, author) {
@@ -218,12 +191,12 @@ class List extends React.Component {
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
+    const colSpan = { xs: 24, sm: 12, md: 12, lg: 12 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="活动ID" {...formItemLayout}>
+            <FormItem label="课程ID" {...formItemLayout}>
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
@@ -232,67 +205,14 @@ class List extends React.Component {
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="活动名称" {...formItemLayout}>
+            <FormItem label="课程名称" {...formItemLayout}>
               {getFieldDecorator('f_Name', {
                 initialValue: queryForm.f_Name,
               })(
-                <Input placeholder="请输入活动名称"  />
+                <Input placeholder="请输入课程名称"  />
               )}
               </FormItem>
             </Col>
-            <Col {...colSpan}>
-              <FormItem label="标题" {...formItemLayout}>
-                {getFieldDecorator('f_Title', {
-                  initialValue: queryForm.f_Title,
-                })(
-                  <Input placeholder="请输入标题"  />
-                )}
-              </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={rowGutter}>
-          <Col {...colSpan}>
-            <FormItem label="活动状态" {...formItemLayout}>
-              {getFieldDecorator('f_Status', {
-                initialValue: queryForm.f_Status,
-              })(
-                <Select placeholder="请选择状态" allowClear>
-                  <Option key={ONLINE_STATUS.ONLINE} value={ONLINE_STATUS.ONLINE}>上线</Option>
-                  <Option key={ONLINE_STATUS.OFFLINE} value={ONLINE_STATUS.OFFLINE}>下线</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col {...colSpan}>
-            <FormItem label="创建时间" {...formItemLayout}>
-              {getFieldDecorator('f_CreateTime', {
-                initialValue: queryForm.f_CreateTimeBegin && queryForm.f_CreateTimeEnd && [moment(parseInt(queryForm.f_CreateTimeBegin)), moment(parseInt(queryForm.f_CreateTimeEnd))],
-              })(
-                <RangePicker
-                  ranges={{ 
-                    '今天': [moment(), moment()], 
-                    '本周': [moment().startOf('week'), moment().endOf('week')],
-                    '本月': [moment().startOf('month'), moment().endOf('month')],
-                  }}
-                />
-              )}
-            </FormItem>
-          </Col>
-          <Col {...colSpan}>
-            <FormItem label="更新时间" {...formItemLayout}>
-              {getFieldDecorator('f_UpdateTime', {
-                initialValue: queryForm.f_UpdateTimeBegin && queryForm.f_UpdateTimeEnd && [moment(parseInt(queryForm.f_UpdateTimeBegin)), moment(parseInt(queryForm.f_UpdateTimeEnd))],
-              })(
-                <RangePicker
-                  ranges={{ 
-                    '今天': [moment(), moment()], 
-                    '本周': [moment().startOf('week'), moment().endOf('week')],
-                    '本月': [moment().startOf('month'), moment().endOf('month')],
-                  }}
-                />
-              )}
-            </FormItem>
-          </Col>
         </Row>
         {this.renderOperation()}
       </Form>
@@ -314,15 +234,15 @@ class List extends React.Component {
       dataIndex: 'id',
       sorter: true,
     }, {
-      title: '活动名称',
+      title: '课程名称',
       dataIndex: 'name',
       sorter: true,
     }, {
-      title: '更新信息',
-      dataIndex: 'updateAt',
+      title: '课程信息',
+      dataIndex: 'courseInfo',
       align: 'center',
       sorter: true,
-      render: (val, record) => this.renderUpdateInfo(val, record.updatePerson)
+      // render: (val, record) => this.renderUpdateInfo(val, record.updatePerson)
     }, {
       title: '操作',
       align: 'center',
@@ -330,16 +250,6 @@ class List extends React.Component {
       render: (val, record) => {
         return <Fragment>
           <Button size="small"><Link to={`${pathname}/edit?id=${record.id}`}>编辑</Link></Button>
-          <Divider type="vertical" />
-          {
-            record.status === ONLINE_STATUS.OFFLINE &&
-            <Popconfirm title="确认上线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.ONLINE)}}>
-              <Button size="small">上线</Button>
-            </Popconfirm> ||
-            <Popconfirm title="确认下线?" onConfirm={() => {this.handleUpdateStatus(record.id, ONLINE_STATUS.OFFLINE)}}>
-              <Button size="small">下线</Button>
-            </Popconfirm> 
-          }
           <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>

@@ -15,7 +15,33 @@ class CoachController extends Controller {
   async index() {
     const ctx = this.ctx;
     const { limit, offset, ...rest } = ctx.query;
-    const query = { limit: toInt(limit), offset: toInt(offset), where: { ...rest } };
+    
+    const { 
+      pageSize, pageNo, username, title, sortName,
+      createTimeBegin, createTimeEnd, updateTimeBegin, updateTimeEnd, 
+      userType,
+      ...restQuery 
+    } = ctx.query;
+
+    // 动态查询
+    const dynamicQuery = {
+      ...ctx.parseLikeQuery(`username`, username),
+      ...ctx.parseLikeQuery(`title`, title),
+      ...ctx.parseBetweenQuery(`createdAt`, createTimeBegin, createTimeEnd),
+      ...ctx.parseBetweenQuery(`updatedAt`, updateTimeBegin, updateTimeEnd),
+    };
+    
+    // 查询参数
+    const query = { 
+      userType,
+      ...ctx.parsePageObject(pageSize, pageNo),
+      where: { 
+        ...dynamicQuery,
+        ...restQuery 
+      },
+      order: sortName && [ctx.parseOrderQuery(sortName)],
+    };
+    // const query = { limit: toInt(limit), offset: toInt(offset), where: { ...rest } };
     const result = await ctx.service.coach.findAll(query);
     ctx.body = ctx.outputSuccess(result);
   }

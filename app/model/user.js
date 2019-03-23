@@ -35,6 +35,7 @@ module.exports = app => {
 
   User.associate = function() {
     app.model.User.hasMany(app.model.UserHasRole, { foreignKey: 'uid', targetKey: 'id', as: 'roles' });
+    app.model.User.belongsTo(app.model.Coach, { foreignKey: 'id', targetKey: 'uid', as: 'user' });
   }
 
   return User;

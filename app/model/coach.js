@@ -11,5 +11,10 @@ module.exports = app => {
     },
   });
 
+  Coach.associate = function() {
+    app.model.Coach.hasMany(app.model.Course, { foreignKey: 'coachId', targetKey: 'id', as: 'courseInfo' });
+    app.model.Coach.hasOne(app.model.User, { foreignKey: 'id', targetKey: 'uid', as: 'user' });
+  }
+
   return Coach;
 };

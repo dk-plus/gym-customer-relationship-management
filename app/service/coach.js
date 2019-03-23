@@ -7,8 +7,19 @@ class Coach extends Service {
 
   async findAll(query) {
     const ctx = this.ctx;
-    const result = await ctx.model.Coach.findAll(query);
-    return result;
+    query = {
+      include: [{
+        model: this.app.model.User,
+        as: 'user',
+      }],
+      distinct: true,
+      ...query,
+    }
+    const result = await ctx.model.Coach.findAndCountAll(query);
+    return {
+      content: result.rows,
+      total: result.count,
+    };
   }
 
   async findById(id) {

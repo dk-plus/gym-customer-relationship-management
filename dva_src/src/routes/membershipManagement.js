@@ -4,7 +4,7 @@ import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ONLINE_STATUS } from '../utils/enum';
+import {  } from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
