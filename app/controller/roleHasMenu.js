@@ -48,7 +48,7 @@ class RoleHasMenuController extends Controller {
     }
 
     const { ...rest } = ctx.request.body;
-    const updatedAt = new Date().valueOf();
+    const updatedAt = Date.now();
     await roleHasMenu.update({ updatedAt, ...rest });
     ctx.body = ctx.outputSuccess(roleHasMenu);
   }

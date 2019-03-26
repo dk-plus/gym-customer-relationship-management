@@ -5,7 +5,7 @@ import { request, postData, putData, deleteData } from '../utils/request';
 export function getList(args) {
   let query = queryString.stringify(args);
   query = query ? `&${query}` : '';
-  return request(`/user/?userType=1&roleType=1${query}`);
+  return request(`/user?userType=1${query}`);
 }
 
 // 查询id

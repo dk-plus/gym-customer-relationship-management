@@ -2,7 +2,7 @@ import queryString from 'query-string';
 import { request, postData, putData, deleteData } from '../utils/request';
 
 /**
- * user
+ * member
  * deletePotentialClient
  */
 
@@ -10,20 +10,20 @@ import { request, postData, putData, deleteData } from '../utils/request';
 export function getList(args) {
   let query = queryString.stringify(args);
   query = query ? `&${query}` : '';
-  return request(`/user/?roleType=0${query}`);
+  return request(`/member?isMember=0${query}`);
 }
 
 // 查询id
 export function getDetail(id) {
-  return request(`/user/${id}`);
+  return request(`/member/${id}`);
 }
 
 // 更新
 export function update(id, args) {
-  return putData(`/user/${id}`, args);
+  return putData(`/member/${id}`, args);
 }
 
 // 删除
 export function deletePotentialClient(id) {
-  return deleteData(`/user/${id}`);
+  return deleteData(`/member/${id}`);
 }

@@ -160,7 +160,7 @@ class List extends React.Component {
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 12, lg: 8 };
+    const colSpan = { xs: 24, sm: 12, md: 12, lg: 12 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
@@ -207,15 +207,30 @@ class List extends React.Component {
       dataIndex: 'username',
       sorter: true,
     }, {
+      title: '手机号',
+      dataIndex: 'phone',
+    }, {
+      title: '潜在客户数',
+      dataIndex: 'potentialNum',
+      align: 'center',
+      render: (val, record) => {
+        const num = record.memberInfo && record.memberInfo.filter(member => member.isMember === 0).length;
+        return num > 0 ? <Link to={`${pathname}/potentialEdit?salesId=${record.id}`}>{num}</Link> : num;
+      }
+    }, {
+      title: '会员数',
+      dataIndex: 'clientNum',
+      align: 'center',
+      render: (val, record) => {
+        const num = record.memberInfo && record.memberInfo.filter(member => member.isMember === 1).length;
+        return num > 0 ? <Link to={`${pathname}/memberEdit?salesId=${record.id}`}>{num}</Link> : num;
+      }
+    }, {
       title: '操作',
       align: 'center',
       width: '220',
       render: (val, record) => {
-        const id = record.roles && record.roles.map(hasRole => hasRole.id)[0];
-        const query = id && `&hasRoleId=${id}` || '';
         return <Fragment>
-          <Button size="small"><Link to={`${pathname}/edit?id=${record.id}${query}`}>查看业绩</Link></Button>
-          <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>
           </Popconfirm>

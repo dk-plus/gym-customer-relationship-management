@@ -21,21 +21,12 @@ module.exports = app => {
       field: 'updated_at'
     },
     phone: INTEGER,
-    email: STRING(45),
-    bornTime: {
-      type: BIGINT,
-      field: 'born_time',
-    },
     description: STRING(45),
-    roleType: {
-      type: INTEGER,
-      field: 'has_role',
-    },
   });
 
   User.associate = function() {
     app.model.User.hasMany(app.model.UserHasRole, { foreignKey: 'uid', targetKey: 'id', as: 'roles' });
-    app.model.User.belongsTo(app.model.Coach, { foreignKey: 'id', targetKey: 'uid', as: 'user' });
+    app.model.User.hasMany(app.model.Member, { foreignKey: 'salesId', targetKey: 'id', as: 'memberInfo' });
   }
 
   return User;

@@ -3,9 +3,9 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
-import { formItemLayout } from '../components/BaseLayout';
-import {  } from '../utils/enum';
-import { stringifyQuery, getSortName } from '../utils/utils';
+import { formItemLayout } from '../../components/BaseLayout';
+import {} from '../../utils/enum';
+import { stringifyQuery, getSortName } from '../../utils/utils';
 
 const TimelineItem = Timeline.Item;
 const FormItem = Form.Item;
@@ -13,7 +13,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /**
- * modelname coachManagement
+ * modelname clientManagement
  */
 class List extends React.Component {
   constructor(props) {
@@ -22,6 +22,8 @@ class List extends React.Component {
 
   state = {
     queryForm: {},
+    passwordVisible: false,
+    selectedRowKeys: [],
   }
 
   componentDidMount() {
@@ -33,7 +35,7 @@ class List extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'coachManagement/initState',
+      type: 'clientManagement/initState',
     });
   }
 
@@ -50,7 +52,7 @@ class List extends React.Component {
     });
 
     dispatch({
-      type: 'coachManagement/fetch',
+      type: 'clientManagement/fetch',
       payload: { params },
     });
   }
@@ -104,7 +106,7 @@ class List extends React.Component {
   handleDelete(id) {
     const { dispatch, location: { query } } = this.props;
     dispatch({
-      type: 'coachManagement/delete',
+      type: 'clientManagement/delete',
       payload: id,
     }).then(res => {
       if (res && res.returnCode === '0') {
@@ -112,6 +114,26 @@ class List extends React.Component {
         this.loadData(query);
       } else {
         message.error(`删除失败${res.errorMessage}`);
+      }
+    });
+  }
+
+  // 更新
+  handleUpdateSalesBatch(salesId, idArr) {
+    const { dispatch, location: { query } } = this.props;
+    const params = {
+      salesId,
+      idArr: idArr.join(','),
+    };
+    dispatch({
+      type: 'membershipManagement/updateSalesBatch',
+      payload: { params },
+    }).then(res => {
+      if (res && res.returnCode === '0') {
+        message.success('转移成功');
+        this.loadData(query);
+      } else {
+        message.error(`转移失败！${res.errorMessage}`);
       }
     });
   }
@@ -141,11 +163,55 @@ class List extends React.Component {
     </Fragment>    
   }
 
+  // 时间轴
+  renderTime(timeArr) {
+    return <Fragment>
+      <Timeline>
+        {
+          timeArr.map(time => {
+            const lastTime = moment(time);
+            const timeStamp = lastTime.isValid() ? lastTime.valueOf() : ''
+            return <TimelineItem>{timeStamp}</TimelineItem>
+          })
+        }
+      </Timeline>
+    </Fragment>
+  }
+
+  // 渲染密码
+  renderPassword(pwd) {
+    const { passwordVisible } = this.state;
+    return <div style={{display: 'flex', justifyContent: 'space-between'}}>
+      {
+        passwordVisible &&
+        <>
+          <span>{pwd}</span>
+          <a onClick={() => {
+            this.setState({
+              passwordVisible: false,
+            });
+          }}>隐藏</a>
+        </> ||
+        <>
+          <span>******</span>
+          <a onClick={() => {
+            this.setState({
+              passwordVisible: true,
+            });
+          }}>查看</a>
+        </>
+      }
+    </div>
+  }
+
   // 操作
   renderOperation() {
     const { location: { pathname } } = this.props;
     return <Fragment>
-      <Row type="flex" justify="end" style={{marginBottom: '20px'}}>
+      <Row type="flex" justify="space-between" style={{marginBottom: '20px'}}>
+        <Col>
+          <Button type="primary">一键转移</Button>
+        </Col>
         <Col>
           <Button type="primary" htmlType="submit">查询</Button>
           <Divider type="vertical" />
@@ -156,16 +222,16 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { coachManagement: { list }, location: { pathname }, form } = this.props;
+    const { clientManagement: { list }, location: { pathname }, form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 12, lg: 8 };
+    const colSpan = { xs: 24, sm: 8, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="教练ID" {...formItemLayout}>
+            <FormItem label="会员ID" {...formItemLayout}>
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
@@ -174,14 +240,23 @@ class List extends React.Component {
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="教练名" {...formItemLayout}>
-              {getFieldDecorator('f_Username', {
-                initialValue: queryForm.f_Username,
-              })(
-                <Input placeholder="请输入教练名"  />
-              )}
-              </FormItem>
-            </Col>
+            <FormItem label="会员名" {...formItemLayout}>
+            {getFieldDecorator('f_Username', {
+              initialValue: queryForm.f_Username,
+            })(
+              <Input placeholder="请输入会员名"  />
+            )}
+            </FormItem>
+          </Col>
+          <Col {...colSpan}>
+            <FormItem label="手机号" {...formItemLayout}>
+            {getFieldDecorator('f_Phone', {
+              initialValue: queryForm.f_Phone,
+            })(
+              <Input placeholder="请输入手机号"  />
+            )}
+            </FormItem>
+          </Col>
         </Row>
         {this.renderOperation()}
       </Form>
@@ -189,7 +264,8 @@ class List extends React.Component {
   }
 
   render() {
-    const { coachManagement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { clientManagement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { selectedRowKeys } = this.state;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -198,27 +274,33 @@ class List extends React.Component {
       total: total,
       showTotal: () => `共${total}条记录`
     };
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: (selectedRowKeys) => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        this.setState({ selectedRowKeys });
+      },
+    };
     const columns = [{
       title: 'ID',
       dataIndex: 'id',
       sorter: true,
     }, {
-      title: '用户ID',
-      dataIndex: 'uid',
+      title: '会员姓名',
+      dataIndex: 'username',
       sorter: true,
     }, {
-      title: '教练名',
-      dataIndex: 'username',
-      render: (val, record) => record.user && record.user.username || ''
+      title: '手机号',
+      dataIndex: 'phone',
     }, {
       title: '操作',
       align: 'center',
       width: '220',
       render: (val, record) => {
-        const id = record.roles && record.roles.map(hasRole => hasRole.id)[0];
-        const query = id && `&hasRoleId=${id}` || '';
         return <Fragment>
-          <Button size="small"><Link to={`${pathname}/edit?id=${record.id}${query}`}>编辑</Link></Button>
+          <Popconfirm title="确认转移?" onConfirm={() => {this.handleDelete(record.id)}}>
+            <Button size="small">转移</Button>
+          </Popconfirm>
           <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>
@@ -233,6 +315,7 @@ class List extends React.Component {
           columns={columns}
           dataSource={list}
           rowKey={record => record.id}
+          rowSelection={rowSelection}
           loading={loading}
           pagination={paginationProps}
           onChange={this.handleTableChange}
@@ -242,10 +325,11 @@ class List extends React.Component {
   }
 }
 
-function mapStateToProps({ coachManagement, loading }) {
+function mapStateToProps({ clientManagement, membershipManagement, loading }) {
   return {
-    coachManagement,
-    loading: loading.effects['coachManagement/fetch'],
+    clientManagement,
+    membershipManagement,
+    loading: loading.effects['clientManagement/fetch'],
   }
 }
 

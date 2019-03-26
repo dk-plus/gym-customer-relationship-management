@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
-import {  } from '../../utils/enum';
+import { SEX } from '../../utils/enum';
 import { getParentPath } from '../../utils/utils';
 
 const { RangePicker } = DatePicker;
@@ -11,7 +11,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 /**
- * model courseManagement
+ * model clientManagement
  * getDetail
  * create
  * update
@@ -30,7 +30,7 @@ class Edit extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'courseManagement/initState',
+      type: 'clientManagement/initState',
     });
   }
 
@@ -38,22 +38,12 @@ class Edit extends React.Component {
   loadData(params) {
     const { dispatch } = this.props;
 
-    dispatch({
-      type: 'coachManagement/fetch',
-      payload: {
-        params: {
-          pageNo: 1,
-          pageSize: 999,
-        }
-      }
-    });
-    
     if (!params.id) {
       return;
     }
 
     dispatch({
-      type: 'courseManagement/getDetail',
+      type: 'clientManagement/getDetail',
       payload: params.id
     });
   }
@@ -77,15 +67,15 @@ class Edit extends React.Component {
         message.warn('表单校验不通过');
         return;
       }
-
+console.log(formValue)
       const params = {
         ...formValue,
       }
 
-      let url = 'courseManagement/create';
+      let url = 'clientManagement/create';
 
       if (query.id) {
-        url = 'courseManagement/update';
+        url = 'clientManagement/update';
       }
 
       dispatch({
@@ -98,47 +88,67 @@ class Edit extends React.Component {
         if (res.returnCode === '0') {
           message.success('保存成功');
           this.backToUrl();
+        } else {
+          message.error(`保存失败！${res.errorMessage}`);
         }
       });
     });
   }
 
   renderForm() {
-    const { courseManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { clientManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
     const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSubmit}>
-        <Card title="基本信息">
-          <Form.Item label="课程名称">
-            {getFieldDecorator('name', {
+        <Card title="会员信息">
+          <Form.Item label="会员姓名">
+            {getFieldDecorator('username', {
               rules: [{
                 required: true,
-                message: '请输入课程名称',
+                message: '请输入会员姓名',
               }],
-              initialValue: detail.name,
+              initialValue: detail.username,
             })(
-              <Input placeholder="请输入课程名称" />
+              <Input placeholder="请输入会员姓名" />
             )}
           </Form.Item>
-          <Form.Item label="教练">
-            {getFieldDecorator('coachId', {
-              rules: [{
-                required: true,
-                message: '请输入课程名称',
-              }],
-              initialValue: detail.coachId,
+          <Form.Item label="性别">
+            {getFieldDecorator('sex', {
+              initialValue: detail.sex,
             })(
-              <Select placeholder="请选择教练" allowClear>
+              <Select placeholder="请选择性别" allowClear>
+                <Option key={SEX.UNKNOWN} value={SEX.UNKNOWN}>未知</Option>
+                <Option key={SEX.MALE} value={SEX.MALE}>男</Option>
+                <Option key={SEX.FEMALE} value={SEX.FEMALE}>女</Option>
               </Select>
             )}
           </Form.Item>
-          <Form.Item label="描述">
-            {getFieldDecorator('description', {
-              initialValue: detail.description,
+          <Form.Item label="手机号">
+            {getFieldDecorator('phone', {
+              rules: [{
+                required: true,
+                message: '请输入手机号',
+              }],
+              initialValue: detail.phone,
             })(
-              <TextArea placeholder="请输入课程描述" rows={4} />
+              <Input placeholder="请输入手机号" />
+            )}
+          </Form.Item>
+          <Form.Item label="会籍顾问">
+            {getFieldDecorator('salesId', {
+              initialValue: detail.salesId,
+            })(
+              <Select placeholder="请选择会籍顾问" allowClear>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="年龄">
+            {getFieldDecorator('age', {
+              initialValue: detail.age,
+            })(
+              <Input placeholder="请输入年龄" />
             )}
           </Form.Item>
         </Card>
@@ -154,7 +164,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { courseManagement: { detail }, location: { pathname }, loading } = this.props;
+    const { clientManagement: { detail }, location: { pathname }, loading } = this.props;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
         {this.renderForm()}
@@ -163,11 +173,11 @@ class Edit extends React.Component {
   }
 }
 
-function mapStateToProps({ courseManagement, loading }) {
+function mapStateToProps({ clientManagement, loading }) {
   return {
-    courseManagement,
-    loading: loading.effects['courseManagement/getDetail'],
-    editLoading: loading.effects['courseManagement/update'],
+    clientManagement,
+    loading: loading.effects['clientManagement/getDetail'],
+    editLoading: loading.effects['clientManagement/update'],
   }
 }
 

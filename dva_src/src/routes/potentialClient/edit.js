@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
 import moment from 'moment';
-import { ROLE } from '../../utils/enum';
+import { SEX } from '../../utils/enum';
 import { getParentPath } from '../../utils/utils';
 
 const { RangePicker } = DatePicker;
@@ -11,7 +11,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 /**
- * model accountManagement
+ * model potentialClient
  * getDetail
  * create
  * update
@@ -30,7 +30,7 @@ class Edit extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'accountManagement/initState',
+      type: 'potentialClient/initState',
     });
   }
 
@@ -43,7 +43,7 @@ class Edit extends React.Component {
     }
 
     dispatch({
-      type: 'accountManagement/getDetail',
+      type: 'potentialClient/getDetail',
       payload: params.id
     });
   }
@@ -72,48 +72,83 @@ class Edit extends React.Component {
         ...formValue,
       }
 
-      let url = 'accountManagement/create';
+      let url = 'potentialClient/create';
 
-      if (query.hasRoleId) {
-        url = 'accountManagement/update';
-      }
-      if (!query.hasRoleId) {
-        params.uid = query.id;
+      if (query.id) {
+        url = 'potentialClient/update';
       }
 
       dispatch({
         type: url,
         payload: {
-          id: query.hasRoleId ||'',
+          id: query.id || '',
           params
         }
       }).then(res => {
         if (res.returnCode === '0') {
           message.success('保存成功');
           this.backToUrl();
+        } else {
+          message.error(`保存失败！${res.errorMessage}`);
         }
       });
     });
   }
 
   renderForm() {
-    const { accountManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { potentialClient: { detail }, location: { pathname }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
     const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
-
-    const roleId = detail.roles && detail.roles.map(role => role.roleId).join('，')
     return <Fragment>
       <Form onSubmit={this.handleSubmit}>
-        <Card title={`用户名：${detail.username}`} extra={`用户ID：${detail.id}`}>
-          <Form.Item label="角色">
-            {getFieldDecorator('roleId', {
-              initialValue: roleId,
+        <Card title="客户信息">
+          <Form.Item label="客户姓名">
+            {getFieldDecorator('username', {
+              rules: [{
+                required: true,
+                message: '请输入客户姓名',
+              }],
+              initialValue: detail.username,
             })(
-              <Select placeholder="请选择角色" allowClear>
-                <Option key={ROLE.MANAGER}>管理员</Option>
-                <Option key={ROLE.SALES}>会籍顾问</Option>
+              <Input placeholder="请输入客户姓名" />
+            )}
+          </Form.Item>
+          <Form.Item label="性别">
+            {getFieldDecorator('sex', {
+              initialValue: detail.sex,
+            })(
+              <Select placeholder="请选择性别" allowClear>
+                <Option key={SEX.UNKNOWN} value={SEX.UNKNOWN}>未知</Option>
+                <Option key={SEX.MALE} value={SEX.MALE}>男</Option>
+                <Option key={SEX.FEMALE} value={SEX.FEMALE}>女</Option>
               </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="手机号">
+            {getFieldDecorator('phone', {
+              rules: [{
+                required: true,
+                message: '请输入手机号',
+              }],
+              initialValue: detail.phone,
+            })(
+              <Input placeholder="请输入手机号" />
+            )}
+          </Form.Item>
+          <Form.Item label="会籍顾问">
+            {getFieldDecorator('salesId', {
+              initialValue: detail.salesId,
+            })(
+              <Select placeholder="请选择会籍顾问" allowClear>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="年龄">
+            {getFieldDecorator('age', {
+              initialValue: detail.age,
+            })(
+              <Input placeholder="请输入年龄" />
             )}
           </Form.Item>
         </Card>
@@ -129,7 +164,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { accountManagement: { detail }, location: { pathname }, loading } = this.props;
+    const { potentialClient: { detail }, location: { pathname }, loading } = this.props;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
         {this.renderForm()}
@@ -138,11 +173,11 @@ class Edit extends React.Component {
   }
 }
 
-function mapStateToProps({ accountManagement, loading }) {
+function mapStateToProps({ potentialClient, loading }) {
   return {
-    accountManagement,
-    loading: loading.effects['accountManagement/getDetail'],
-    editLoading: loading.effects['accountManagement/update'],
+    potentialClient,
+    loading: loading.effects['potentialClient/getDetail'],
+    editLoading: loading.effects['potentialClient/update'],
   }
 }
 

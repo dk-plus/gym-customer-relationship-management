@@ -1,5 +1,5 @@
 import * as userService from '../services/membershipManagement';
-import { queryToCommom } from '../utils/utils';
+import { queryToCommom, arrayToKeyValue } from '../utils/utils';
 
 /**
  * membershipManagement
@@ -7,6 +7,8 @@ import { queryToCommom } from '../utils/utils';
 const stateData = {
   list: [],
   detail: {},
+  membershipList: [],
+  membershipMap: {},
 };
 
 export default {
@@ -42,6 +44,8 @@ export default {
 
       if (result && result.returnCode === '0' && result.returnValue) {
         data.list = result.returnValue.content;
+        data.membershipList = result.returnValue.content;
+        data.membershipMap = arrayToKeyValue(data.membershipList, 'id', 'username');
         data.total = result.returnValue.total;
       }
       yield put({ type: 'save', payload: data });
@@ -82,7 +86,15 @@ export default {
     // 删除
     *delete({ payload }, { call, put }) {  // eslint-disable-line
 
-      const result = yield call(userService.deleteActivity, payload);
+      const result = yield call(userService.deleteMembershipManagement, payload);
+      return result;
+    },
+
+    // 更新
+    *updateSalesBatch({ payload: { params } }, { call, put }) {  // eslint-disable-line
+      params = params || {};
+
+      const result = yield call(userService.updateSalesBatch, params);
       return result;
     },
   },

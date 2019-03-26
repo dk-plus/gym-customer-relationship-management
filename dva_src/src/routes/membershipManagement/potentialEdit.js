@@ -3,9 +3,9 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
-import { formItemLayout } from '../components/BaseLayout';
-import {  } from '../utils/enum';
-import { stringifyQuery, getSortName } from '../utils/utils';
+import { formItemLayout } from '../../components/BaseLayout';
+import {} from '../../utils/enum';
+import { stringifyQuery, getSortName } from '../../utils/utils';
 
 const TimelineItem = Timeline.Item;
 const FormItem = Form.Item;
@@ -13,7 +13,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /**
- * modelname personalAchievement
+ * modelname potentialClient
  */
 class List extends React.Component {
   constructor(props) {
@@ -22,6 +22,9 @@ class List extends React.Component {
 
   state = {
     queryForm: {},
+    passwordVisible: false,
+    selectedRowKeys: [],
+    hasSelected: false,
   }
 
   componentDidMount() {
@@ -33,7 +36,7 @@ class List extends React.Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'personalAchievement/initState',
+      type: 'potentialClient/initState',
     });
   }
 
@@ -50,7 +53,7 @@ class List extends React.Component {
     });
 
     dispatch({
-      type: 'personalAchievement/fetch',
+      type: 'potentialClient/fetch',
       payload: { params },
     });
   }
@@ -80,18 +83,6 @@ class List extends React.Component {
         ...formValue,
       }
 
-      // 处理时间
-      if (params.f_CreateTime && params.f_CreateTime.length > 0) {
-        params.f_CreateTimeBegin = params.f_CreateTime[0].startOf('day').valueOf();
-        params.f_CreateTimeEnd = params.f_CreateTime[1].endOf('day').valueOf();
-        delete params.f_CreateTime;
-      }
-      if (params.f_UpdateTime && params.f_UpdateTime.length > 0) {
-        params.f_UpdateTimeBegin = params.f_UpdateTime[0].startOf('day').valueOf();
-        params.f_UpdateTimeEnd = params.f_UpdateTime[1].endOf('day').valueOf();
-        delete params.f_UpdateTime;
-      }
-
       this.pushQueryToUrl(stringifyQuery(params));
 
       this.loadData(params);
@@ -116,7 +107,7 @@ class List extends React.Component {
   handleDelete(id) {
     const { dispatch, location: { query } } = this.props;
     dispatch({
-      type: 'personalAchievement/delete',
+      type: 'potentialClient/delete',
       payload: id,
     }).then(res => {
       if (res && res.returnCode === '0') {
@@ -128,18 +119,22 @@ class List extends React.Component {
     });
   }
 
-  // 上下线
-  handleUpdateStatus(id, status) {
+  // 更新
+  handleUpdateSalesBatch(salesId, idArr) {
     const { dispatch, location: { query } } = this.props;
+    const params = {
+      salesId,
+      ids: idArr.join(','),
+    };
     dispatch({
-      type: 'personalAchievement/updateStatus',
-      payload: {id, status},
+      type: 'membershipManagement/updateSalesBatch',
+      payload: { params },
     }).then(res => {
       if (res && res.returnCode === '0') {
-        message.success('操作成功');
+        message.success('转移成功');
         this.loadData(query);
       } else {
-        message.error(`操作失败${res.errorMessage}`);
+        message.error(`转移失败！${res.errorMessage}`);
       }
     });
   }
@@ -184,13 +179,48 @@ class List extends React.Component {
     </Fragment>
   }
 
+  // 渲染密码
+  renderPassword(pwd) {
+    const { passwordVisible } = this.state;
+    return <div style={{display: 'flex', justifyContent: 'space-between'}}>
+      {
+        passwordVisible &&
+        <>
+          <span>{pwd}</span>
+          <a onClick={() => {
+            this.setState({
+              passwordVisible: false,
+            });
+          }}>隐藏</a>
+        </> ||
+        <>
+          <span>******</span>
+          <a onClick={() => {
+            this.setState({
+              passwordVisible: true,
+            });
+          }}>查看</a>
+        </>
+      }
+    </div>
+  }
+
   // 操作
   renderOperation() {
-    const { location: { pathname } } = this.props;
+    const { location: { pathname }, dispatch, submitting } = this.props;
+    const { hasSelected, selectedRowKeys } = this.state;
     return <Fragment>
       <Row type="flex" justify="space-between" style={{marginBottom: '20px'}}>
         <Col>
-          <Button type="primary"><Link to={`${pathname}/edit`}>新建</Link></Button>
+          <Input.Search 
+            style={{width:'200px'}} 
+            disabled={!hasSelected} 
+            enterButton="一键转移"  
+            onSearch={(val) => {
+              this.handleUpdateSalesBatch(val, selectedRowKeys);
+            }}
+            loading={submitting}
+          />
         </Col>
         <Col>
           <Button type="primary" htmlType="submit">查询</Button>
@@ -202,16 +232,16 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { personalAchievement: { list }, location: { pathname }, form } = this.props;
+    const { potentialClient: { list }, location: { pathname }, form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
+    const colSpan = { xs: 24, sm: 8, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
           <Col {...colSpan}>
-            <FormItem label="活动ID" {...formItemLayout}>
+            <FormItem label="客户ID" {...formItemLayout}>
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
@@ -220,53 +250,21 @@ class List extends React.Component {
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="活动名称" {...formItemLayout}>
-              {getFieldDecorator('f_Name', {
-                initialValue: queryForm.f_Name,
-              })(
-                <Input placeholder="请输入活动名称"  />
-              )}
-              </FormItem>
-            </Col>
-            <Col {...colSpan}>
-              <FormItem label="标题" {...formItemLayout}>
-                {getFieldDecorator('f_Title', {
-                  initialValue: queryForm.f_Title,
-                })(
-                  <Input placeholder="请输入标题"  />
-                )}
-              </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={rowGutter}>
-          <Col {...colSpan}>
-            <FormItem label="创建时间" {...formItemLayout}>
-              {getFieldDecorator('f_CreateTime', {
-                initialValue: queryForm.f_CreateTimeBegin && queryForm.f_CreateTimeEnd && [moment(parseInt(queryForm.f_CreateTimeBegin)), moment(parseInt(queryForm.f_CreateTimeEnd))],
-              })(
-                <RangePicker
-                  ranges={{ 
-                    '今天': [moment(), moment()], 
-                    '本周': [moment().startOf('week'), moment().endOf('week')],
-                    '本月': [moment().startOf('month'), moment().endOf('month')],
-                  }}
-                />
-              )}
+            <FormItem label="客户名" {...formItemLayout}>
+            {getFieldDecorator('f_Username', {
+              initialValue: queryForm.f_Username,
+            })(
+              <Input placeholder="请输入客户名"  />
+            )}
             </FormItem>
           </Col>
           <Col {...colSpan}>
-            <FormItem label="更新时间" {...formItemLayout}>
-              {getFieldDecorator('f_UpdateTime', {
-                initialValue: queryForm.f_UpdateTimeBegin && queryForm.f_UpdateTimeEnd && [moment(parseInt(queryForm.f_UpdateTimeBegin)), moment(parseInt(queryForm.f_UpdateTimeEnd))],
-              })(
-                <RangePicker
-                  ranges={{ 
-                    '今天': [moment(), moment()], 
-                    '本周': [moment().startOf('week'), moment().endOf('week')],
-                    '本月': [moment().startOf('month'), moment().endOf('month')],
-                  }}
-                />
-              )}
+            <FormItem label="手机号" {...formItemLayout}>
+            {getFieldDecorator('f_Phone', {
+              initialValue: queryForm.f_Phone,
+            })(
+              <Input placeholder="请输入手机号"  />
+            )}
             </FormItem>
           </Col>
         </Row>
@@ -276,7 +274,8 @@ class List extends React.Component {
   }
 
   render() {
-    const { personalAchievement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { potentialClient: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { selectedRowKeys, hasSelected } = this.state;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -285,27 +284,36 @@ class List extends React.Component {
       total: total,
       showTotal: () => `共${total}条记录`
     };
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: (selectedRowKeys) => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        this.setState({ 
+          selectedRowKeys,
+          hasSelected: !hasSelected,
+         });
+      },
+    };
     const columns = [{
       title: 'ID',
       dataIndex: 'id',
       sorter: true,
     }, {
-      title: '活动名称',
-      dataIndex: 'name',
+      title: '潜在客户姓名',
+      dataIndex: 'username',
       sorter: true,
     }, {
-      title: '更新信息',
-      dataIndex: 'updateAt',
-      align: 'center',
-      sorter: true,
-      render: (val, record) => this.renderUpdateInfo(val, record.updatePerson)
+      title: '手机号',
+      dataIndex: 'phone',
     }, {
       title: '操作',
       align: 'center',
       width: '220',
       render: (val, record) => {
         return <Fragment>
-          <Button size="small"><Link to={`${pathname}/edit?id=${record.id}`}>编辑</Link></Button>
+          <Popconfirm title="确认转移?" onConfirm={() => {this.handleDelete(record.id)}}>
+            <Button size="small">转移</Button>
+          </Popconfirm>
           <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>
@@ -320,6 +328,7 @@ class List extends React.Component {
           columns={columns}
           dataSource={list}
           rowKey={record => record.id}
+          rowSelection={rowSelection}
           loading={loading}
           pagination={paginationProps}
           onChange={this.handleTableChange}
@@ -329,10 +338,12 @@ class List extends React.Component {
   }
 }
 
-function mapStateToProps({ personalAchievement, loading }) {
+function mapStateToProps({ potentialClient, membershipManagement, loading }) {
   return {
-    personalAchievement,
-    loading: loading.effects['personalAchievement/fetch'],
+    potentialClient,
+    membershipManagement,
+    loading: loading.effects['potentialClient/fetch'],
+    submitting: loading.effects['membershipManagement/updateSalesBatch'],
   }
 }
 

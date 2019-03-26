@@ -202,7 +202,7 @@ class List extends React.Component {
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 12, lg: 8 };
+    const colSpan = { xs: 24, sm: 8, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSearch}>
         <Row gutter={rowGutter}>
@@ -217,13 +217,22 @@ class List extends React.Component {
           </Col>
           <Col {...colSpan}>
             <FormItem label="用户名" {...formItemLayout}>
-              {getFieldDecorator('f_Username', {
-                initialValue: queryForm.f_Username,
-              })(
-                <Input placeholder="请输入用户名"  />
-              )}
-              </FormItem>
-            </Col>
+            {getFieldDecorator('f_Username', {
+              initialValue: queryForm.f_Username,
+            })(
+              <Input placeholder="请输入用户名"  />
+            )}
+            </FormItem>
+          </Col>
+          <Col {...colSpan}>
+            <FormItem label="账号" {...formItemLayout}>
+            {getFieldDecorator('f_Account', {
+              initialValue: queryForm.f_Account,
+            })(
+              <Input placeholder="请输入账号"  />
+            )}
+            </FormItem>
+          </Col>
         </Row>
         {this.renderOperation()}
       </Form>
@@ -253,6 +262,9 @@ class List extends React.Component {
       dataIndex: 'account',
       sorter: true,
       render: (val, record) => <Popover title="密码" content={this.renderPassword(record.password)}>{val}</Popover>
+    }, {
+      title: '手机号',
+      dataIndex: 'phone',
     }, {
       title: '角色',
       dataIndex: 'role',

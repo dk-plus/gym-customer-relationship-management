@@ -2,7 +2,12 @@
 // 角色
 export const ROLE = {
   MANAGER: 1, // 管理员
-  COACH: 2, // 教练
-  SALES: 3, // 会籍人员
-  MEMBER: 4, // 会员
+  SALES: 2, // 会籍人员
+};
+
+// 性别
+export const SEX = {
+  UNKNOWN: 0, // 未知
+  MALE: 1, // 男
+  FEMALE: 2, // 女
 };

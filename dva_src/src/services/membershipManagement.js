@@ -10,7 +10,7 @@ import { request, postData, putData, deleteData } from '../utils/request';
 export function getList(args) {
   let query = queryString.stringify(args);
   query = query ? `&${query}` : '';
-  return request(`/user/?userType=3&roleType=1${query}`);
+  return request(`/user?userType=2${query}`);
 }
 
 // 查询id
@@ -26,4 +26,9 @@ export function update(id, args) {
 // 删除
 export function deleteMembershipManagement(id) {
   return deleteData(`/user/${id}`);
+}
+
+// 更新
+export function updateSalesBatch(args) {
+  return postData(`/updateSalesBatch`, args);
 }

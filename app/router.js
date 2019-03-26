@@ -11,20 +11,13 @@ module.exports = app => {
   router.get('/logout', controller.user.logout);
   router.resources('user', '/user', controller.user);
 
-  router.resources('coach', '/coach', controller.coach);
-  router.resources('course', '/course', controller.course);
-  router.resources('courseHasStudent', '/courseHasStudent', controller.courseHasStudent);
   router.resources('menu', '/menu', controller.menu);
-  router.resources('right', '/right', controller.right);
   router.resources('role', '/role', controller.role);
   router.resources('roleHasMenu', '/roleHasMenu', controller.roleHasMenu);
-  router.resources('roleHasRight', '/roleHasRight', controller.roleHasRight);
-  router.resources('student', '/student', controller.student);
-  router.resources('userHasRight', '/userHasRight', controller.userHasRight);
   router.resources('userHasRole', '/userHasRole', controller.userHasRole);
-  router.resources('mark', '/mark', controller.mark);
-  router.resources('sales', '/sales', controller.sales);
-  router.resources('courseDate', '/courseDate', controller.courseDate);
+  router.resources('member', '/member', controller.member);
+  
+  router.post('/updateSalesBatch', controller.member.updateSalesBatch);
   
   router.get('/*', controller.home.index);
 };

@@ -15,29 +15,9 @@ const totalMenu = [{
   url: '/home',
   icon: 'home',
 }, {
-  key: 'totalAchievement',
-  title: '数据统计',
-  url: '/totalAchievement',
-  icon: 'bar-chart',
-}, {
   key: 'accountManagement',
   title: '用户管理',
   url: '/accountManagement',
-  icon: 'user',
-}, {
-  key: 'courseManagement',
-  title: '课程管理',
-  url: '/courseManagement',
-  icon: 'calendar',
-}, {
-  key: 'courseArrangement',
-  title: '我的课程',
-  url: '/courseArrangement',
-  icon: 'calendar',
-}, {
-  key: 'coachManagement',
-  title: '教练管理',
-  url: '/coachManagement',
   icon: 'user',
 }, {
   key: 'membershipManagement',
@@ -50,10 +30,10 @@ const totalMenu = [{
   url: '/potentialClient',
   icon: 'user',
 }, {
-  key: 'personalAchievement',
-  title: '个人销售业绩',
-  url: '/personalAchievement',
-  icon: 'bar-chart',
+  key: 'clientManagement',
+  title: '会员管理',
+  url: '/clientManagement',
+  icon: 'user',
 }];
 
 const menuName = getUser().menu && getUser().menu.map(item => {
@@ -73,15 +53,12 @@ const menu = menuName && totalMenu.filter(menu => menuName.some(_ => _===menu.ke
 
 const breadcrumbMap = {
   'home': '首页',
-  'totalAchievement': '数据统计',
   'accountManagement': '用户管理',
-  'courseArrangement': '我的课程',
-  'courseManagement': '课程管理',
-  'coachManagement': '教练管理',
-  'potentialClient': '潜在客户',
+  'potentialClient': '潜在客户管理',
+  'potentialEdit': '潜在客户',
   'membershipManagement': '会籍顾问管理',
-  'personalAchievement': '个人销售业绩',
-  'member': '会员',
+  'clientManagement': '会员管理',
+  'memberEdit': '会员',
   'my': '我的',
   'edit': '编辑',
 };
@@ -108,7 +85,7 @@ class MyLayout extends React.Component {
       <Layout
         style={{ minHeight: '100%' }}>
         <Header style={{display: 'flex', justifyContent: 'space-between', background: '#fff'}}>
-          <div>健身房企业规范化化管理系统</div>
+          <div>健身房企业规范化管理系统</div>
           <Menu
             mode="horizontal"
             // theme="dark"
@@ -143,7 +120,7 @@ class MyLayout extends React.Component {
               {children}
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-              健身房企业规范化化管理系统 ©2019 Created by 蓝冰丽
+              健身房企业规范化管理系统 ©2019 Created by 蓝冰丽
             </Footer>
           </Layout>
         </Layout>

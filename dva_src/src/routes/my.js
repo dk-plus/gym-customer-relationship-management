@@ -78,7 +78,6 @@ class Edit extends React.Component {
       const params = {
         ...formValue,
       };
-      params.bornTime = params.bornTime.startOf('day').valueOf();
 
       let url = 'user/create';
 
@@ -112,9 +111,6 @@ class Edit extends React.Component {
       </Form.Item>
       <Form.Item label="手机号">
       {detail.phone}
-      </Form.Item>
-      <Form.Item label="出生日期">
-      {moment(detail.bornTime).format('YYYY-MM-DD')}
       </Form.Item>
       <Form.Item label="描述">
       {detail.description}
@@ -152,18 +148,11 @@ class Edit extends React.Component {
               <Input placeholder="请输入手机号" />
             )}
           </Form.Item>
-          <Form.Item label="出生日期">
-            {getFieldDecorator('bornTime', {
-              initialValue: detail.bornTime && moment(detail.bornTime),
-            })(
-              <DatePicker placeholder="请输入出生日期" />
-            )}
-          </Form.Item>
           <Form.Item label="描述">
             {getFieldDecorator('description', {
               initialValue: detail.description,
             })(
-              <TextArea placeholder="请输入活动描述" rows={4} />
+              <TextArea placeholder="请输入描述" rows={4} />
             )}
           </Form.Item>
         </Card>

@@ -48,43 +48,8 @@ function RouterConfig({ history, app }) {
     },
     {
       path: '/accountManagement/edit',
-      models: () => [import('./models/accountManagement'), import('./models/coachManagement')],
+      models: () => [import('./models/accountManagement')],
       component: () => import('./routes/accountManagement/edit'),
-    },
-    {
-      path: '/totalAchievement',
-      models: () => [import('./models/totalAchievement')],
-      component: () => import('./routes/totalAchievement'),
-    },
-    {
-      path: '/totalAchievement/potentialClient',
-      models: () => [import('./models/totalAchievement')],
-      component: () => import('./routes/totalAchievement/potentialClient'),
-    },
-    {
-      path: '/totalAchievement/member',
-      models: () => [import('./models/totalAchievement')],
-      component: () => import('./routes/totalAchievement/member'),
-    },
-    {
-      path: '/courseArrangement',
-      models: () => [import('./models/courseArrangement')],
-      component: () => import('./routes/courseArrangement'),
-    },
-    {
-      path: '/courseManagement',
-      models: () => [import('./models/courseManagement')],
-      component: () => import('./routes/courseManagement'),
-    },
-    {
-      path: '/courseManagement/edit',
-      models: () => [import('./models/courseManagement'), import('./models/coachManagement')],
-      component: () => import('./routes/courseManagement/edit'),
-    },
-    {
-      path: '/coachManagement',
-      models: () => [import('./models/coachManagement')],
-      component: () => import('./routes/coachManagement'),
     },
     {
       path: '/membershipManagement',
@@ -92,14 +57,34 @@ function RouterConfig({ history, app }) {
       component: () => import('./routes/membershipManagement'),
     },
     {
-      path: '/personalAchievement',
-      models: () => [import('./models/personalAchievement')],
-      component: () => import('./routes/personalAchievement'),
+      path: '/membershipManagement/memberEdit',
+      models: () => [import('./models/clientManagement'), import('./models/membershipManagement')],
+      component: () => import('./routes/membershipManagement/memberEdit'),
+    },
+    {
+      path: '/membershipManagement/potentialEdit',
+      models: () => [import('./models/potentialClient'), import('./models/membershipManagement')],
+      component: () => import('./routes/membershipManagement/potentialEdit'),
+    },
+    {
+      path: '/clientManagement',
+      models: () => [import('./models/clientManagement'), import('./models/membershipManagement')],
+      component: () => import('./routes/clientManagement'),
+    },
+    {
+      path: '/clientManagement/edit',
+      models: () => [import('./models/clientManagement'), import('./models/membershipManagement')],
+      component: () => import('./routes/clientManagement/edit'),
     },
     {
       path: '/potentialClient',
-      models: () => [import('./models/potentialClient'), import('./models/accountManagement')],
+      models: () => [import('./models/potentialClient'), import('./models/membershipManagement')],
       component: () => import('./routes/potentialClient'),
+    },
+    {
+      path: '/potentialClient/edit',
+      models: () => [import('./models/potentialClient'), import('./models/membershipManagement')],
+      component: () => import('./routes/potentialClient/edit'),
     },
   ];
 

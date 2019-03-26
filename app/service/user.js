@@ -36,34 +36,11 @@ class User extends Service {
           model: this.app.model.UserHasRole,
           as: 'roles',
           where: {
-            roleId: 2, // 教练
+            roleId: 2, // 会籍人员
           }
-        }],
-        distinct: true,
-        ...query,
-      }
-    }
-    if (userType === 3) {
-      query = {
-        include: [{
-          model: this.app.model.UserHasRole,
-          as: 'roles',
-          where: {
-            roleId: 3, // 会籍人员
-          }
-        }],
-        distinct: true,
-        ...query,
-      }
-    }
-    if (userType === 4) {
-      query = {
-        include: [{
-          model: this.app.model.UserHasRole,
-          as: 'roles',
-          where: {
-            roleId: 4, // 会员
-          }
+        }, {
+          model: this.app.model.Member,
+          as: 'memberInfo',
         }],
         distinct: true,
         ...query,
@@ -105,8 +82,8 @@ class User extends Service {
 
   async create({ ...rest }) {
     const ctx = this.ctx;
-    const createdAt = new Date().valueOf();
-    const updatedAt = new Date().valueOf();
+    const createdAt = Date.now();
+    const updatedAt = Date.now();
     const result = ctx.model.User.create({ createdAt, updatedAt, ...rest });
     return result;
   }
@@ -162,6 +139,18 @@ class User extends Service {
     }
 
     return ctx.outputError('422', '密码错误');
+  }
+  
+  async destroy(id) {
+    const ctx = this.ctx;
+    // const id = toInt(ctx.params.id);
+    const user = await this.findById(id);
+    if (!user) {
+      return;
+    }
+
+    const result = await user.destroy();
+    return result;
   }
 }
 

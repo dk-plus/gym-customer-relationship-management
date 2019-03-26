@@ -19,8 +19,8 @@ class Menu extends Service {
 
   async create({ ...rest }) {
     const ctx = this.ctx;
-    const createdAt = new Date().valueOf();
-    const updatedAt = new Date().valueOf();
+    const createdAt = Date.now();
+    const updatedAt = Date.now();
     const result = ctx.model.Menu.create({ createdAt, updatedAt, ...rest });
     return result;
   }

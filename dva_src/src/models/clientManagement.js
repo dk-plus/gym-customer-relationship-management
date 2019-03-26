@@ -1,8 +1,8 @@
-import * as userService from '../services/courseArrangement';
+import * as clientService from '../services/clientManagement';
 import { queryToCommom } from '../utils/utils';
 
 /**
- * courseArrangement
+ * clientManagement
  */
 const stateData = {
   list: [],
@@ -11,7 +11,7 @@ const stateData = {
 
 export default {
 
-  namespace: 'courseArrangement',
+  namespace: 'clientManagement',
 
   state: {
     ...stateData,
@@ -38,7 +38,7 @@ export default {
       const options = {
         ...queryToCommom(params)
       };
-      const result = yield call(userService.getList, options);
+      const result = yield call(clientService.getList, options);
 
       if (result && result.returnCode === '0' && result.returnValue) {
         data.list = result.returnValue.content;
@@ -54,7 +54,7 @@ export default {
       const data = {
         detail: {},
       };
-      const result = yield call(userService.getDetail, payload);
+      const result = yield call(clientService.getDetail, payload);
       if (result && result.returnCode === '0' && result.returnValue) {
         data.detail = result.returnValue;
       }
@@ -67,7 +67,7 @@ export default {
     *create({ payload: { params } }, { call, put }) {  // eslint-disable-line
       params = params || {};
 
-      const result = yield call(userService.create, params);
+      const result = yield call(clientService.create, params);
       return result;
     },
 
@@ -75,14 +75,24 @@ export default {
     *update({ payload: { id, params } }, { call, put }) {  // eslint-disable-line
       params = params || {};
 
-      const result = yield call(userService.update, id, params);
+      const result = yield call(clientService.update, id, params);
+      return result;
+    },
+
+    // 更新会员状态
+    *updateStatus({ payload }, { call, put }) {  // eslint-disable-line
+      const options = {
+        isMember: 0,
+      };
+
+      const result = yield call(clientService.update, payload.id, options);
       return result;
     },
 
     // 删除
     *delete({ payload }, { call, put }) {  // eslint-disable-line
 
-      const result = yield call(userService.deleteActivity, payload);
+      const result = yield call(clientService.deleteClient, payload);
       return result;
     },
   },

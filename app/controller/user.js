@@ -74,7 +74,7 @@ class UserController extends Controller {
     }
 
     const { ...rest } = ctx.request.body;
-    const updatedAt = new Date().valueOf();
+    const updatedAt = Date.now();
     await user.update({ updatedAt, ...rest });
     ctx.body = ctx.outputSuccess(user);
   }
@@ -84,14 +84,34 @@ class UserController extends Controller {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
     const user = await ctx.service.user.findById(id);
+    const userHasRole = await ctx.service.userHasRole.findOne({ where: { uid: id } });
     if (!user) {
       ctx.status = 404;
       return;
     }
 
-    await user.destroy();
+    if (!userHasRole) {
+      await user.destroy();
+    } else {
+      await this.deleteUserAndRole(user.id, userHasRole.id);
+    }
+
     ctx.status = 200;
     ctx.body = ctx.outputSuccess(true);
+  }
+
+  // 事务
+  async deleteUserAndRole(userId, userHasRoleId) {
+    const ctx = this.ctx;
+    let transaction;
+    try {
+      transaction = await this.ctx.model.transaction();
+      await ctx.service.userHasRole.destroy(userHasRoleId, transaction);
+      await ctx.service.user.destroy(userId, transaction);
+      await transaction.commit();
+    } catch (e) {
+      await transaction.rollback();
+    }
   }
 
   // 注册
@@ -117,13 +137,7 @@ class UserController extends Controller {
 
     // 校验正确写入session
     if (result.returnCode === '0') {
-      // ctx.session.userInfo = {
-      //   account,
-      //   password,
-      // };
       ctx.session.userInfo = result.returnValue;
-
-      // ctx.redirect('/');
     }
 
     ctx.body = result;

@@ -48,7 +48,7 @@ class UserHasRoleController extends Controller {
     }
 
     const { ...rest } = ctx.request.body;
-    const updatedAt = new Date().valueOf();
+    const updatedAt = Date.now();
     await userHasRole.update({ updatedAt, ...rest });
     ctx.body = ctx.outputSuccess(userHasRole);
   }
