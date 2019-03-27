@@ -1,6 +1,6 @@
 {
-  "name": "egg-dva-template",
-  "version": "0.0.1",
+  "name": "gym-customer-relationship-management",
+  "version": "1.0.0",
   "description": "developing with egg & dva.",
   "private": true,
   "dependencies": {
