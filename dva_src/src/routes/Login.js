@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Card, Input, Icon, Row, Col, Button, Form, Layout, message } from 'antd';
+import { Card, Input, Icon, Button, Form, Layout, message } from 'antd';
 
 const Password = Input.Password;
 const FormItem = Form.Item;
@@ -61,15 +61,13 @@ class Login extends React.Component {
   }
 
   render() {
-    const rowGutter = { xs: 8, sm: 16, md: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8 };
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { registerMode } = this.state;
 
     return (
       <Layout style={{height: '100%'}}>
         <Content style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Card title="健身房企业规范化化管理系统">
+          <Card title="健身房企业规范化管理系统">
             <Form onSubmit={this.handleSubmit}>
               <FormItem>
               {
@@ -83,6 +81,21 @@ class Login extends React.Component {
                 )
               }
               </FormItem>
+              {
+                registerMode &&
+                <FormItem>
+                  {
+                    getFieldDecorator('username', {
+                      rules: [{
+                        required: true,
+                        message: '请输入用户名',
+                      }]
+                    })(
+                      <Input placeholder="请输入用户名" prefix={<Icon type="user" />} />
+                    )
+                  }
+                </FormItem>
+              }
               <FormItem>
               {
                 getFieldDecorator('password', {

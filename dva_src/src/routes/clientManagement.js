@@ -1,31 +1,26 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
+import { Card, Table, Button, Divider, Tag, Popconfirm, Form, Input, Row, Col, Select, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import { ROLE, SEX } from '../utils/enum';
+import { SEX } from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
-const TimelineItem = Timeline.Item;
 const FormItem = Form.Item;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 /**
  * modelname clientManagement
  */
 class List extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     queryForm: {},
   }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
+    const { location: { query } } = this.props;
 
     this.loadData(query);
   }
@@ -181,7 +176,6 @@ class List extends React.Component {
 
   // 操作
   renderOperation() {
-    const { location: { pathname } } = this.props;
     return <Fragment>
       <Row type="flex" justify="end" style={{marginBottom: '20px'}}>
         <Col>
@@ -194,7 +188,7 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { clientManagement: { list }, location: { pathname }, form } = this.props;
+    const { membershipManagement: { membershipList }, form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
@@ -207,7 +201,7 @@ class List extends React.Component {
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
-                <Input placeholder="请输入ID"  />
+                <Input placeholder="请输入ID" allowClear />
               )}
             </FormItem>
           </Col>
@@ -216,7 +210,7 @@ class List extends React.Component {
               {getFieldDecorator('f_Username', {
                 initialValue: queryForm.f_Username,
               })(
-                <Input placeholder="请输入会员名"  />
+                <Input placeholder="请输入会员名" allowClear />
               )}
               </FormItem>
             </Col>
@@ -225,7 +219,11 @@ class List extends React.Component {
             {getFieldDecorator('f_SalesId', {
               initialValue: queryForm.f_SalesId,
             })(
-              <Input placeholder="请输入会籍顾问"  />
+              <Select placeholder="请输入会籍顾问" allowClear>
+                {
+                  membershipList.map(item => <Option key={item.id}>{`${item.username || '未知'}(${item.id})`}</Option>)
+                }
+              </Select>
             )}
             </FormItem>
           </Col>
@@ -236,7 +234,7 @@ class List extends React.Component {
               {getFieldDecorator('f_Phone', {
                 initialValue: queryForm.f_Phone,
               })(
-                <Input placeholder="请输入手机号"  />
+                <Input placeholder="请输入手机号" allowClear />
               )}
             </FormItem>
           </Col>
@@ -246,7 +244,7 @@ class List extends React.Component {
               initialValue: queryForm.f_Sex,
             })(
               <Select placeholder="请选择性别" allowClear>
-                <Option key={SEX.UNKNOW} value={SEX.UNKNOW}>未知</Option>
+                <Option key={SEX.UNKNOWN} value={SEX.UNKNOWN}>未知</Option>
                 <Option key={SEX.MALE} value={SEX.MALE}>男</Option>
                 <Option key={SEX.FEMALE} value={SEX.FEMALE}>女</Option>
               </Select>
@@ -258,7 +256,7 @@ class List extends React.Component {
             {getFieldDecorator('f_Age', {
               initialValue: queryForm.f_Age,
             })(
-              <Input placeholder="请输入年龄"  />
+              <Input placeholder="请输入年龄" allowClear />
             )}
             </FormItem>
           </Col>
@@ -269,12 +267,12 @@ class List extends React.Component {
   }
 
   render() {
-    const { clientManagement: { list, total }, membershipManagement: { membershipList, membershipMap }, location: { pathname, query }, loading } = this.props;
+    const { clientManagement: { list, total }, membershipManagement: { membershipMap }, location: { pathname, query }, loading } = this.props;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      current: query.pageNo && parseInt(query.pageNo),
-      pageSize: query.pageSize && parseInt(query.pageSize),
+      current: query.pageNo && parseInt(query.pageNo, 10),
+      pageSize: query.pageSize && parseInt(query.pageSize, 10),
       total: total,
       showTotal: () => `共${total}条记录`
     };
@@ -296,6 +294,7 @@ class List extends React.Component {
     }, {
       title: '性别',
       dataIndex: 'sex',
+      align: 'center',
       render: (val, record) => this.renderSex(val),
     }, {
       title: '年龄',
@@ -315,7 +314,7 @@ class List extends React.Component {
     }, {
       title: '操作',
       align: 'center',
-      width: '220',
+      width: '250px',
       render: (val, record) => {
         const id = record.roles && record.roles.map(hasRole => hasRole.id)[0];
         const query = id && `&hasRoleId=${id}` || '';

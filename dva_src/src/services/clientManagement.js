@@ -1,5 +1,5 @@
 import queryString from 'query-string';
-import { request, postData, putData, deleteData } from '../utils/request';
+import { request, putData, deleteData } from '../utils/request';
 
 /**
  * member

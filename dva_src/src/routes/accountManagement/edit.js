@@ -1,13 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
-import moment from 'moment';
+import { routerRedux } from 'dva/router';
+import { Card, Button, Divider, Form, message, Row, Col, Select } from 'antd';
 import { ROLE } from '../../utils/enum';
 import { getParentPath } from '../../utils/utils';
 
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
 const { Option } = Select;
 
 /**
@@ -17,12 +14,9 @@ const { Option } = Select;
  * update
  */
 class Edit extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
+    const { location: { query } } = this.props;
 
     this.loadData(query);
   }
@@ -97,10 +91,8 @@ class Edit extends React.Component {
   }
 
   renderForm() {
-    const { accountManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { accountManagement: { detail }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
-    const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
 
     const roleId = detail.roles && detail.roles.map(role => role.roleId).join('，')
     return <Fragment>
@@ -129,7 +121,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { accountManagement: { detail }, location: { pathname }, loading } = this.props;
+    const { loading } = this.props;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
         {this.renderForm()}

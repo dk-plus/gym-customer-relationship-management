@@ -1,33 +1,26 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
+import { Card, Table, Button, Divider, Popconfirm, Form, Input, Row, Col, message, Statistic, Icon } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../../components/BaseLayout';
-import {} from '../../utils/enum';
 import { stringifyQuery, getSortName } from '../../utils/utils';
 
-const TimelineItem = Timeline.Item;
 const FormItem = Form.Item;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 /**
  * modelname clientManagement
  */
 class List extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     queryForm: {},
     passwordVisible: false,
     selectedRowKeys: [],
+    hasSelected: false,
   }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
+    const { location: { query } } = this.props;
 
     this.loadData(query);
   }
@@ -54,6 +47,11 @@ class List extends React.Component {
     dispatch({
       type: 'clientManagement/fetch',
       payload: { params },
+    });
+    
+    dispatch({
+      type: 'membershipManagement/getDetail',
+      payload: params.salesId,
     });
   }
 
@@ -90,16 +88,19 @@ class List extends React.Component {
 
   // 重置表单
   handleResetForm() {
-    const { form } = this.props;
+    const { form, location: { query } } = this.props;
+    const params = {
+      salesId: query.salesId,
+    };
     form.resetFields();
 
     this.setState({
       queryForm: {},
     });
 
-    this.pushQueryToUrl();
+    this.pushQueryToUrl(stringifyQuery(params));
 
-    this.loadData();
+    this.loadData(params);
   }
 
   // 删除
@@ -123,7 +124,7 @@ class List extends React.Component {
     const { dispatch, location: { query } } = this.props;
     const params = {
       salesId,
-      idArr: idArr.join(','),
+      ids: idArr.join(','),
     };
     dispatch({
       type: 'membershipManagement/updateSalesBatch',
@@ -132,6 +133,9 @@ class List extends React.Component {
       if (res && res.returnCode === '0') {
         message.success('转移成功');
         this.loadData(query);
+        this.setState({
+          hasSelected: false,
+        });
       } else {
         message.error(`转移失败！${res.errorMessage}`);
       }
@@ -163,54 +167,66 @@ class List extends React.Component {
     </Fragment>    
   }
 
-  // 时间轴
-  renderTime(timeArr) {
-    return <Fragment>
-      <Timeline>
-        {
-          timeArr.map(time => {
-            const lastTime = moment(time);
-            const timeStamp = lastTime.isValid() ? lastTime.valueOf() : ''
-            return <TimelineItem>{timeStamp}</TimelineItem>
-          })
-        }
-      </Timeline>
-    </Fragment>
-  }
-
-  // 渲染密码
-  renderPassword(pwd) {
-    const { passwordVisible } = this.state;
-    return <div style={{display: 'flex', justifyContent: 'space-between'}}>
-      {
-        passwordVisible &&
-        <>
-          <span>{pwd}</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: false,
-            });
-          }}>隐藏</a>
-        </> ||
-        <>
-          <span>******</span>
-          <a onClick={() => {
-            this.setState({
-              passwordVisible: true,
-            });
-          }}>查看</a>
-        </>
-      }
-    </div>
+  // 渲染基本信息
+  renderBaseInfo() {
+    const { membershipManagement: { detail } } = this.props;
+    const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
+    const colSpan = { xs: 24, sm: 8, md: 8, lg: 8 };
+    const members = detail.memberInfo && detail.memberInfo.filter(member => (
+      member.isMember === 1 &&
+      moment(member.updatedAt).startOf('day').valueOf() === moment().startOf('day').valueOf()
+    )) || [];
+    return <>
+      <Card style={{marginBottom: '20px'}} bordered={false} bodyStyle={{padding: '10px 0'}}>
+        <Row gutter={rowGutter}>
+          <Col {...colSpan}>
+            <Card>
+              <Statistic
+                title="会籍顾问"
+                value={detail.username}
+              />
+            </Card>
+          </Col>
+          <Col {...colSpan}>
+            <Card>
+              <Statistic
+                title="会籍ID"
+                value={detail.id}
+              />
+            </Card>
+          </Col>
+          <Col {...colSpan}>
+            <Card>
+              <Statistic
+                title="今日新增会员"
+                value={members.length}
+                valueStyle={{ color: '#3f8600' }}
+                prefix={<Icon type="arrow-up" />}
+                suffix="人"
+              />
+            </Card>
+          </Col>
+        </Row>
+      </Card>  
+    </>
   }
 
   // 操作
   renderOperation() {
-    const { location: { pathname } } = this.props;
+    const { submitting } = this.props;
+    const { hasSelected, selectedRowKeys } = this.state;
     return <Fragment>
       <Row type="flex" justify="space-between" style={{marginBottom: '20px'}}>
         <Col>
-          <Button type="primary">一键转移</Button>
+          <Input.Search 
+            style={{width:'200px'}} 
+            disabled={!hasSelected} 
+            enterButton={<Button type="primary" loading={submitting} disabled={!hasSelected}>一键转移</Button>}  
+            onSearch={(val) => {
+              this.handleUpdateSalesBatch(val, selectedRowKeys);
+            }}
+            allowClear
+          />
         </Col>
         <Col>
           <Button type="primary" htmlType="submit">查询</Button>
@@ -222,7 +238,7 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { clientManagement: { list }, location: { pathname }, form } = this.props;
+    const { form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
@@ -235,7 +251,7 @@ class List extends React.Component {
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
-                <Input placeholder="请输入ID"  />
+                <Input placeholder="请输入ID" allowClear />
               )}
             </FormItem>
           </Col>
@@ -244,7 +260,7 @@ class List extends React.Component {
             {getFieldDecorator('f_Username', {
               initialValue: queryForm.f_Username,
             })(
-              <Input placeholder="请输入会员名"  />
+              <Input placeholder="请输入会员名" allowClear />
             )}
             </FormItem>
           </Col>
@@ -253,7 +269,7 @@ class List extends React.Component {
             {getFieldDecorator('f_Phone', {
               initialValue: queryForm.f_Phone,
             })(
-              <Input placeholder="请输入手机号"  />
+              <Input placeholder="请输入手机号" allowClear />
             )}
             </FormItem>
           </Col>
@@ -264,21 +280,24 @@ class List extends React.Component {
   }
 
   render() {
-    const { clientManagement: { list, total }, location: { pathname, query }, loading } = this.props;
+    const { clientManagement: { list, total }, location: { query }, loading } = this.props;
     const { selectedRowKeys } = this.state;
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      current: query.pageNo && parseInt(query.pageNo),
-      pageSize: query.pageSize && parseInt(query.pageSize),
+      current: query.pageNo && parseInt(query.pageNo, 10),
+      pageSize: query.pageSize && parseInt(query.pageSize, 10),
       total: total,
       showTotal: () => `共${total}条记录`
     };
     const rowSelection = {
       selectedRowKeys,
       onChange: (selectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
-        this.setState({ selectedRowKeys });
+        const selectFlag = selectedRowKeys.length > 0 ? true : false;
+        this.setState({ 
+          selectedRowKeys,
+          hasSelected: selectFlag,
+        });
       },
     };
     const columns = [{
@@ -298,10 +317,6 @@ class List extends React.Component {
       width: '220',
       render: (val, record) => {
         return <Fragment>
-          <Popconfirm title="确认转移?" onConfirm={() => {this.handleDelete(record.id)}}>
-            <Button size="small">转移</Button>
-          </Popconfirm>
-          <Divider type="vertical" />
           <Popconfirm title="确认删除?删除后无法恢复" onConfirm={() => {this.handleDelete(record.id)}}>
             <Button type="danger" size="small">删除</Button>
           </Popconfirm>
@@ -310,6 +325,8 @@ class List extends React.Component {
     }];
     return (
       <Card bordered={false}>
+        {this.renderBaseInfo()}
+        <Divider />
         {this.renderForm()}
         <Table
           columns={columns}
@@ -330,6 +347,7 @@ function mapStateToProps({ clientManagement, membershipManagement, loading }) {
     clientManagement,
     membershipManagement,
     loading: loading.effects['clientManagement/fetch'],
+    submitting: loading.effects['membershipManagement/updateSalesBatch'],
   }
 }
 

@@ -1,14 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
-import moment from 'moment';
-import {  } from '../utils/enum';
+import { routerRedux } from 'dva/router';
+import { Card, Button, Divider, Form, message, Row, Col, Input } from 'antd';
 import { getParentPath, getUser } from '../utils/utils';
 
-const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-const { Option } = Select;
 
 /**
  * model user
@@ -28,8 +24,6 @@ class Edit extends React.Component {
   }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
-
     this.loadData(userInfo);
   }
 
@@ -66,9 +60,8 @@ class Edit extends React.Component {
   handleSubmit = (e) => {
     e && e.preventDefault();
 
-    const { dispatch, form, location: { query } } = this.props;
+    const { dispatch, form} = this.props;
 
-    // const userInfo = getUser();
     form.validateFieldsAndScroll((err, formValue) => {
       if (err) {
         message.warn('表单校验不通过');
@@ -104,7 +97,7 @@ class Edit extends React.Component {
   }
 
   renderText() {
-    const { user: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { user: { detail }} = this.props;
     return <Card title="基本信息" extra={<Button type="dashed" size="small" onClick={() => {this.setState({editMode: true})}}>编辑</Button>}>
       <Form.Item label="用户名">
       {detail.username}
@@ -119,10 +112,8 @@ class Edit extends React.Component {
   }
 
   renderForm() {
-    const { user: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { user: { detail }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
-    const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSubmit}>
         <Card title="基本信息">
@@ -134,7 +125,7 @@ class Edit extends React.Component {
               }],
               initialValue: detail.username,
             })(
-              <Input placeholder="请输入用户名" />
+              <Input placeholder="请输入用户名" allowClear />
             )}
           </Form.Item>
           <Form.Item label="手机号">
@@ -145,7 +136,7 @@ class Edit extends React.Component {
               }],
               initialValue: detail.phone,
             })(
-              <Input placeholder="请输入手机号" />
+              <Input placeholder="请输入手机号" allowClear />
             )}
           </Form.Item>
           <Form.Item label="描述">
@@ -168,7 +159,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { user: { detail }, location: { pathname }, loading } = this.props;
+    const { loading } = this.props;
     const { editMode } = this.state;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>

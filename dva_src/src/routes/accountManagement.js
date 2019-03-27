@@ -1,24 +1,18 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Timeline, Popover, Form, Input, Row, Col, Select, DatePicker, message } from 'antd';
+import { Card, Table, Button, Divider, Popconfirm, Timeline, Popover, Form, Input, Row, Col, message } from 'antd';
 import moment from 'moment';
 import { formItemLayout } from '../components/BaseLayout';
-import {} from '../utils/enum';
 import { stringifyQuery, getSortName } from '../utils/utils';
 
 const TimelineItem = Timeline.Item;
 const FormItem = Form.Item;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 /**
  * modelname accountManagement
  */
 class List extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   state = {
     queryForm: {},
@@ -26,7 +20,7 @@ class List extends React.Component {
   }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
+    const { location: { query } } = this.props;
 
     this.loadData(query);
   }
@@ -185,7 +179,6 @@ class List extends React.Component {
 
   // 操作
   renderOperation() {
-    const { location: { pathname } } = this.props;
     return <Fragment>
       <Row type="flex" justify="end" style={{marginBottom: '20px'}}>
         <Col>
@@ -198,7 +191,7 @@ class List extends React.Component {
   }
 
   renderForm() {
-    const { accountManagement: { list }, location: { pathname }, form } = this.props;
+    const { form } = this.props;
     const { queryForm } = this.state;
     const { getFieldDecorator } = form;
     const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
@@ -211,7 +204,7 @@ class List extends React.Component {
               {getFieldDecorator('f_Id', {
                 initialValue: queryForm.f_Id,
               })(
-                <Input placeholder="请输入ID"  />
+                <Input placeholder="请输入ID" allowClear />
               )}
             </FormItem>
           </Col>
@@ -220,7 +213,7 @@ class List extends React.Component {
             {getFieldDecorator('f_Username', {
               initialValue: queryForm.f_Username,
             })(
-              <Input placeholder="请输入用户名"  />
+              <Input placeholder="请输入用户名" allowClear />
             )}
             </FormItem>
           </Col>
@@ -229,7 +222,7 @@ class List extends React.Component {
             {getFieldDecorator('f_Account', {
               initialValue: queryForm.f_Account,
             })(
-              <Input placeholder="请输入账号"  />
+              <Input placeholder="请输入账号" allowClear />
             )}
             </FormItem>
           </Col>
@@ -244,8 +237,8 @@ class List extends React.Component {
     const paginationProps = {
       showSizeChanger: true,
       showQuickJumper: true,
-      current: query.pageNo && parseInt(query.pageNo),
-      pageSize: query.pageSize && parseInt(query.pageSize),
+      current: query.pageNo && parseInt(query.pageNo, 10),
+      pageSize: query.pageSize && parseInt(query.pageSize, 10),
       total: total,
       showTotal: () => `共${total}条记录`
     };

@@ -66,14 +66,6 @@ export default {
 
       return result;
     },
-    
-    // 创建
-    *create({ payload: { params } }, { call, put }) {  // eslint-disable-line
-      params = params || {};
-
-      const result = yield call(userService.create, params);
-      return result;
-    },
 
     // 更新
     *update({ payload: { id, params } }, { call, put }) {  // eslint-disable-line

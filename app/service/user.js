@@ -72,6 +72,9 @@ class User extends Service {
             }]
           }]
         }]
+      }, {
+        model: this.app.model.Member,
+        as: 'memberInfo',
       }],
       where: {
         id

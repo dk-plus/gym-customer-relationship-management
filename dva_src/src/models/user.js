@@ -77,14 +77,6 @@ export default {
       const result = yield call(userService.logout, payload);
       return result;
     },
-    
-    // 创建
-    *create({ payload: { params } }, { call, put }) {  // eslint-disable-line
-      params = params || {};
-
-      const result = yield call(userService.create, params);
-      return result;
-    },
 
     // 更新
     *update({ payload: { id, params } }, { call, put }) {  // eslint-disable-line
@@ -101,13 +93,6 @@ export default {
       };
 
       const result = yield call(userService.update, payload.id, options);
-      return result;
-    },
-
-    // 删除
-    *delete({ payload }, { call, put }) {  // eslint-disable-line
-
-      const result = yield call(userService.deleteActivity, payload);
       return result;
     },
   },

@@ -1,13 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router';
-import { Card, Table, Button, Divider, Tag, Popconfirm, Form, message, Row, Col, Input, Select, DatePicker } from 'antd';
-import moment from 'moment';
+import { routerRedux } from 'dva/router';
+import { Card, Button, Divider, Form, message, Row, Col, Input, Select } from 'antd';
 import { SEX } from '../../utils/enum';
 import { getParentPath } from '../../utils/utils';
 
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
 const { Option } = Select;
 
 /**
@@ -17,12 +14,9 @@ const { Option } = Select;
  * update
  */
 class Edit extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
-    const { dispatch, location: { query } } = this.props;
+    const { location: { query } } = this.props;
 
     this.loadData(query);
   }
@@ -46,6 +40,16 @@ class Edit extends React.Component {
       type: 'clientManagement/getDetail',
       payload: params.id
     });
+
+    dispatch({
+      type: 'membershipManagement/fetch',
+      payload: { 
+        params: {
+          pageNo: 1,
+          pageSize: 999,
+        }
+       },
+    });
   }
 
   // 返回上一层
@@ -67,7 +71,7 @@ class Edit extends React.Component {
         message.warn('表单校验不通过');
         return;
       }
-console.log(formValue)
+
       const params = {
         ...formValue,
       }
@@ -96,10 +100,8 @@ console.log(formValue)
   }
 
   renderForm() {
-    const { clientManagement: { detail }, location: { pathname }, form, editLoading } = this.props;
+    const { clientManagement: { detail }, membershipManagement: { membershipList }, form, editLoading } = this.props;
     const { getFieldDecorator } = form;
-    const rowGutter = { xs: 8, sm: 16, md: 16, lg: 24 };
-    const colSpan = { xs: 24, sm: 12, md: 8, lg: 8 };
     return <Fragment>
       <Form onSubmit={this.handleSubmit}>
         <Card title="会员信息">
@@ -111,7 +113,7 @@ console.log(formValue)
               }],
               initialValue: detail.username,
             })(
-              <Input placeholder="请输入会员姓名" />
+              <Input placeholder="请输入会员姓名" allowClear />
             )}
           </Form.Item>
           <Form.Item label="性别">
@@ -133,14 +135,17 @@ console.log(formValue)
               }],
               initialValue: detail.phone,
             })(
-              <Input placeholder="请输入手机号" />
+              <Input placeholder="请输入手机号" allowClear />
             )}
           </Form.Item>
           <Form.Item label="会籍顾问">
             {getFieldDecorator('salesId', {
-              initialValue: detail.salesId,
+              initialValue: `${detail.salesId}`,
             })(
-              <Select placeholder="请选择会籍顾问" allowClear>
+              <Select placeholder="请选择会籍顾问">
+                {
+                  membershipList.map(item => <Option key={item.id}>{`${item.username || '未知'}(${item.id})`}</Option>)
+                }
               </Select>
             )}
           </Form.Item>
@@ -148,7 +153,7 @@ console.log(formValue)
             {getFieldDecorator('age', {
               initialValue: detail.age,
             })(
-              <Input placeholder="请输入年龄" />
+              <Input placeholder="请输入年龄" allowClear />
             )}
           </Form.Item>
         </Card>
@@ -164,7 +169,7 @@ console.log(formValue)
   }
 
   render() {
-    const { clientManagement: { detail }, location: { pathname }, loading } = this.props;
+    const { loading } = this.props;
     return (
       <Card bordered={false} bodyStyle={{ padding: 0 }} loading={loading}>
         {this.renderForm()}
@@ -173,9 +178,10 @@ console.log(formValue)
   }
 }
 
-function mapStateToProps({ clientManagement, loading }) {
+function mapStateToProps({ clientManagement, membershipManagement, loading }) {
   return {
     clientManagement,
+    membershipManagement,
     loading: loading.effects['clientManagement/getDetail'],
     editLoading: loading.effects['clientManagement/update'],
   }

@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'dva';
-import { Layout, Menu, Breadcrumb, Icon, Tooltip } from 'antd';
-import { arrayToKeyValue, getUser } from '../../utils/utils';
+import { Layout, Menu, Icon, Tooltip } from 'antd';
+import { getUser } from '../../utils/utils';
 import { Link, withRouter } from "dva/router";
 import MyBreadcrumb from "../MyBreadcrumb";
 import MyMenu from "../MyMenu";
@@ -70,16 +70,12 @@ class MyLayout extends React.Component {
   };
 
   onCollapse = (collapsed) => {
-    // console.log(collapsed);
     this.setState({ collapsed });
   }
 
   render() {
     const { children, history: { location } } = this.props;
     const { pathname } = location;
-    // console.log(location)
-    // console.log(siderMap)
-    // console.log(pathname.split('/'))
 
     return (
       <Layout
@@ -88,7 +84,6 @@ class MyLayout extends React.Component {
           <div>健身房企业规范化管理系统</div>
           <Menu
             mode="horizontal"
-            // theme="dark"
             style={{ lineHeight: '64px' }}
           >
             <Menu.Item>

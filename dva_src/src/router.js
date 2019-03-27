@@ -1,7 +1,7 @@
 import React from 'react';
-import { Router, Route, Switch, routerRedux } from 'dva/router';
+import { Router, Route, Switch } from 'dva/router';
 import dynamic from 'dva/dynamic';
-import { Card, Spin, LocaleProvider } from 'antd';
+import { Spin, LocaleProvider } from 'antd';
 import MyLayout from './components/MyLayout';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import moment from 'moment';
@@ -10,11 +10,8 @@ import { parseQuery } from './utils/utils';
 
 moment.locale('zh-cn');
 
-const { ConnectedRouter } = routerRedux;
-
 dynamic.setDefaultLoadingComponent(() => {
   return <Spin size="large"/>;
-  // return <Card loading={true}/>;
 });
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
