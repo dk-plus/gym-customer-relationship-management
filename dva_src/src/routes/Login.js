@@ -67,7 +67,7 @@ class Login extends React.Component {
     return (
       <Layout style={{height: '100%'}}>
         <Content style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Card title="健身房企业规范化管理系统">
+          <Card title="健身房企业内部管理系统">
             <Form onSubmit={this.handleSubmit}>
               <FormItem>
               {

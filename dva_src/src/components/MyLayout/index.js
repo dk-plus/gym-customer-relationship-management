@@ -81,7 +81,7 @@ class MyLayout extends React.Component {
       <Layout
         style={{ minHeight: '100%' }}>
         <Header style={{display: 'flex', justifyContent: 'space-between', background: '#fff'}}>
-          <div>健身房企业规范化管理系统</div>
+          <div>健身房企业内部管理系统</div>
           <Menu
             mode="horizontal"
             style={{ lineHeight: '64px' }}
@@ -115,7 +115,7 @@ class MyLayout extends React.Component {
               {children}
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-              健身房企业规范化管理系统 ©2019 Created by 蓝冰丽
+              健身房企业内部管理系统 ©2019 Created by 蓝冰丽
             </Footer>
           </Layout>
         </Layout>
